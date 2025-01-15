@@ -1,3 +1,5 @@
+# Same but tried to optimize the for loop
+
 from sklearn.model_selection import LeaveOneGroupOut
 from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import LinearRegression
@@ -50,46 +52,34 @@ groups = df_stratified['cluster'].values
 # Initialize LeaveOneGroupOut
 logo = LeaveOneGroupOut()
 
-# Placeholder for results
-results = []
 
 # Example model
 model = XGBRegressor(objective='reg:squarederror', random_state=42, n_estimators=100, max_depth=5, learning_rate=0.1)
 
-# Perform LOGO CV
+results = []
+
 for train_idx, test_idx in logo.split(X, y, groups):
     X_train, X_test = X[train_idx], X[test_idx]
     y_train, y_test = y[train_idx], y[test_idx]
 
-    # Scale
-    # Scale y (minmax scaling)
+    # Scale features
+    scaler = MinMaxScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # Scale target
     y_train_standard = (y_train - y_train.mean()) / (y_train.max() - y_train.min())
     y_test_standard = (y_test - y_train.mean()) / (y_train.max() - y_train.min())
-    
-    # Scale X (minmax scaling)
-    scaler = MinMaxScaler()
-    
-    # Fit the scaler on the training data and transform X_train
-    X_train_scaled = scaler.fit_transform(X_train)
-    
-    # Transform X_test using the same scaler
-    X_test_scaled = scaler.transform(X_test)
-    
-    # Fit model
+
+    # Train model
     model.fit(X_train_scaled, y_train_standard)
-    
+
     # Predict and evaluate
     y_pred = model.predict(X_test_scaled)
     mse = mean_squared_error(y_test_standard, y_pred)
-    
-    # Store results
+
+    # Append results
     results.append({'group_left_out': groups[test_idx][0], 'mse': mse})
 
-# Convert results to a DataFrame for better visualization
-import pandas as pd
-results_df = pd.DataFrame(results)
-
-# Display results
-print(results_df)
-
-results_df.to_csv('LOGOCVXGB.csv', index=False)
+    # Save intermediate results
+    pd.DataFrame(results).to_csv('LOGOCVXGB_partial.csv', index=False)
