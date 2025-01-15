@@ -33,7 +33,7 @@ def extract_good_quality(df):
     return df
 
     # Function to initialize and clean the dataframe
-def initialize_dataframe(file1, file2, file3, path, sample_fraction=0.05):
+def initialize_dataframe(file1, file2, file3, path):
     # Open data
     ds = xr.open_dataset(path + file1, engine='netcdf4')
     ds = ds[['GPP','GPP_qc','longitude','latitude']]
