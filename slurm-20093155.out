@@ -1,0 +1,38 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+
+The following have been reloaded with a version change:
+  1) stack/.2024-04-silent => stack/2024-04
+
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+Site groups:
+        site  group
+0    AR-SLu      6
+1    AT-Neu      3
+2    AU-ASM      7
+3    AU-Cpr      4
+4    AU-Cum      6
+..      ...    ...
+285  US-xTR      7
+286  US-xUK      1
+287  US-xUN      4
+288  US-xYE      0
+289  ZM-Mon      0
+
+[290 rows x 2 columns]
+slurmstepd: error: *** JOB 20093155 ON eu-g9-011-2 CANCELLED AT 2025-01-07T11:32:49 ***
