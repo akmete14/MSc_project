@@ -1,0 +1,50 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+
+The following have been reloaded with a version change:
+  1) stack/.2024-04-silent => stack/2024-04
+
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+  0%|          | 0/25 [00:00<?, ?it/s] 16%|█▌        | 4/25 [00:00<00:00, 34.26it/s] 32%|███▏      | 8/25 [00:00<00:00, 35.78it/s] 48%|████▊     | 12/25 [00:00<00:00, 36.18it/s] 64%|██████▍   | 16/25 [00:00<00:00, 36.23it/s] 80%|████████  | 20/25 [00:00<00:00, 37.07it/s] 96%|█████████▌| 24/25 [00:00<00:00, 37.11it/s]100%|██████████| 25/25 [00:00<00:00, 35.94it/s]
+Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
+       'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv',
+       'NDWI_band7', 'LAI', 'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
+       'cluster', 'IGBP_veg_short_b'GRA'', 'IGBP_veg_short_b'ENF'',
+       'IGBP_veg_short_b'SAV'', 'IGBP_veg_short_b'EBF'',
+       'IGBP_veg_short_b'WSA'', 'IGBP_veg_short_b'DBF'',
+       'IGBP_veg_short_b'OSH'', 'IGBP_veg_short_b'CRO'',
+       'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
+       'IGBP_veg_short_b'CVM''],
+      dtype='object')
+   Unnamed: 0           GPP  ...  IGBP_veg_short_b'WET'  IGBP_veg_short_b'CVM'
+0           0 -2.190074e-08  ...                    NaN                    NaN
+1           1 -2.026436e-08  ...                    NaN                    NaN
+2           2 -2.037174e-08  ...                    NaN                    NaN
+3           3 -1.944209e-08  ...                    NaN                    NaN
+4           4 -1.816712e-08  ...                    NaN                    NaN
+
+[5 rows x 29 columns]
+          Unnamed: 0  ...  IGBP_veg_short_b'CVM'
+29283332    29283332  ...                    NaN
+29283333    29283333  ...                    NaN
+29283334    29283334  ...                    NaN
+29283335    29283335  ...                    NaN
+29283336    29283336  ...                    NaN
+
+[5 rows x 29 columns]
+0it [00:00, ?it/s]slurmstepd: error: *** JOB 21530642 ON eu-g5-030-2 CANCELLED AT 2025-01-21T21:24:18 ***
