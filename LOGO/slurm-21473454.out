@@ -30,8 +30,18 @@ Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
        'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
        'IGBP_veg_short_b'CVM''],
       dtype='object')
+Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
+       'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv',
+       'NDWI_band7', 'LAI', 'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
+       'cluster', 'IGBP_veg_short_b'GRA'', 'IGBP_veg_short_b'ENF'',
+       'IGBP_veg_short_b'SAV'', 'IGBP_veg_short_b'EBF'',
+       'IGBP_veg_short_b'WSA'', 'IGBP_veg_short_b'DBF'',
+       'IGBP_veg_short_b'OSH'', 'IGBP_veg_short_b'CRO'',
+       'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
+       'IGBP_veg_short_b'CVM''],
+      dtype='object')
 Traceback (most recent call last):
-  File "/cluster/project/math/akmete/MSc/LOGO/LOGOCVXGB3.py", line 63, in <module>
+  File "/cluster/project/math/akmete/MSc/LOGO/LOGOCVXGB3.py", line 64, in <module>
     model.fit(X_train_scaled, y_train_standard)
   File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/xgboost/sklearn.py", line 360, in fit
     trainDmatrix = DMatrix(X, label=y, missing=self.missing, nthread=self.n_jobs)

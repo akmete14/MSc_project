@@ -6,6 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 from xgboost import XGBRegressor
 
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups.csv')
+print(df.columns)
 df = df.fillna(0)
 print(df.columns)
 

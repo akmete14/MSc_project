@@ -20,6 +20,7 @@ The following have been reloaded with a version change:
 
  
 
+  0%|          | 0/25 [00:00<?, ?it/s] 16%|█▌        | 4/25 [00:00<00:00, 33.79it/s] 32%|███▏      | 8/25 [00:00<00:00, 33.61it/s] 48%|████▊     | 12/25 [00:00<00:00, 34.93it/s] 64%|██████▍   | 16/25 [00:00<00:00, 35.01it/s] 80%|████████  | 20/25 [00:00<00:00, 35.29it/s] 96%|█████████▌| 24/25 [00:00<00:00, 35.51it/s]100%|██████████| 25/25 [00:00<00:00, 34.62it/s]
 Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
        'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv',
        'NDWI_band7', 'LAI', 'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
@@ -30,17 +31,4 @@ Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
        'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
        'IGBP_veg_short_b'CVM''],
       dtype='object')
-Traceback (most recent call last):
-  File "/cluster/project/math/akmete/MSc/LOGO/LOGOCVXGB3.py", line 63, in <module>
-    model.fit(X_train_scaled, y_train_standard)
-  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/xgboost/sklearn.py", line 360, in fit
-    trainDmatrix = DMatrix(X, label=y, missing=self.missing, nthread=self.n_jobs)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/xgboost/core.py", line 404, in __init__
-    self._init_from_npy2d(data, missing, nthread)
-  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/xgboost/core.py", line 478, in _init_from_npy2d
-    data = np.array(mat.reshape(mat.size), copy=False, dtype=np.float32)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: Unable to avoid copy while creating an array as requested.
-If using `np.array(obj, copy=False)` replace it with `np.asarray(obj)` to allow a copy when needed (no behavior change in NumPy 1.x).
-For more details, see https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword.
+0it [00:00, ?it/s]1it [39:45, 2385.41s/it]2it [1:25:50, 2608.73s/it]

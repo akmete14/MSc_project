@@ -20,6 +20,7 @@ The following have been reloaded with a version change:
 
  
 
+  0%|          | 0/25 [00:00<?, ?it/s] 20%|██        | 5/25 [00:00<00:00, 49.98it/s] 44%|████▍     | 11/25 [00:00<00:00, 51.52it/s] 68%|██████▊   | 17/25 [00:00<00:00, 51.74it/s] 92%|█████████▏| 23/25 [00:00<00:00, 52.08it/s]100%|██████████| 25/25 [00:00<00:00, 50.92it/s]
 Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
        'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv',
        'NDWI_band7', 'LAI', 'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
@@ -30,17 +31,4 @@ Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
        'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
        'IGBP_veg_short_b'CVM''],
       dtype='object')
-Traceback (most recent call last):
-  File "/cluster/project/math/akmete/MSc/LOGO/LOGOCVXGB3.py", line 63, in <module>
-    model.fit(X_train_scaled, y_train_standard)
-  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/xgboost/sklearn.py", line 360, in fit
-    trainDmatrix = DMatrix(X, label=y, missing=self.missing, nthread=self.n_jobs)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/xgboost/core.py", line 404, in __init__
-    self._init_from_npy2d(data, missing, nthread)
-  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/xgboost/core.py", line 478, in _init_from_npy2d
-    data = np.array(mat.reshape(mat.size), copy=False, dtype=np.float32)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: Unable to avoid copy while creating an array as requested.
-If using `np.array(obj, copy=False)` replace it with `np.asarray(obj)` to allow a copy when needed (no behavior change in NumPy 1.x).
-For more details, see https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword.
+0it [00:00, ?it/s]1it [31:48, 1908.06s/it]

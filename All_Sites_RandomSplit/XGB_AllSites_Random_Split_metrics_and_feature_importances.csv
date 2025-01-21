@@ -1,0 +1,32 @@
+Metric,Value,Type,Feature,Importance
+MSE,0.0002786789608091579,Metric,,
+R2,0.7598442208598769,Metric,,
+RMSE,0.016693680265572296,Metric,,
+MAE,0.00865241188233316,Metric,,
+Relative Error,2.0425576583013183,Metric,,
+,,Feature Importance,SWdown_clearsky,0.3438036
+,,Feature Importance,fPAR,0.2908812
+,,Feature Importance,SWdown,0.10566001
+,,Feature Importance,LST_TERRA_Day,0.03976153
+,,Feature Importance,IGBP_veg_short_b'CRO',0.0333067
+,,Feature Importance,Tair,0.028487248
+,,Feature Importance,IGBP_veg_short_b'WET',0.024685927
+,,Feature Importance,LAI,0.023578208
+,,Feature Importance,LST_TERRA_Night,0.017668672
+,,Feature Importance,IGBP_veg_short_b'GRA',0.011243543
+,,Feature Importance,vpd,0.011089696
+,,Feature Importance,LWdown,0.010654878
+,,Feature Importance,IGBP_veg_short_b'ENF',0.009914571
+,,Feature Importance,IGBP_veg_short_b'DBF',0.009722206
+,,Feature Importance,Unnamed: 0,0.006465701
+,,Feature Importance,IGBP_veg_short_b'SAV',0.005425788
+,,Feature Importance,IGBP_veg_short_b'CSH',0.005349818
+,,Feature Importance,hour,0.0052911495
+,,Feature Importance,IGBP_veg_short_b'OSH',0.005277094
+,,Feature Importance,IGBP_veg_short_b'EBF',0.0051291436
+,,Feature Importance,IGBP_veg_short_b'WSA',0.003160832
+,,Feature Importance,IGBP_veg_short_b'MF',0.0025973688
+,,Feature Importance,EVI,0.0008451872
+,,Feature Importance,NIRv,0.0
+,,Feature Importance,NDWI_band7,0.0
+,,Feature Importance,IGBP_veg_short_b'CVM',0.0

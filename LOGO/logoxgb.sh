@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --time=100:00:00
 #SBATCH --mem-per-cpu=20480
 #SBATCH --mail-type=BEGIN,END
 #SBATCH --mail-user=akmete@student.ethz.ch

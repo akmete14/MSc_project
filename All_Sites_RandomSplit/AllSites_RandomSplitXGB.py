@@ -140,7 +140,7 @@ full_dataframe = pd.concat(dataframes, ignore_index=True)
 print("total dataframe concatenated")
 """
 
-
+"""""
 # Define a function which resamples/undersamples so that we get the same amount of data from every site
 def resample_sites(df, site_col='site_id', min_samples=15000, max_samples=20000, random_state=42):
     df_list = []
@@ -159,15 +159,15 @@ def resample_sites(df, site_col='site_id', min_samples=15000, max_samples=20000,
         df_list.append(site_data)
 
     df_balanced = pd.concat(df_list, axis=0)
-    return df_balanced
+    return df_balanced"""""
 
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups.csv')
 print(len(df))
 
 
 # Convert numeric values to less memory usage columns
-#for col in df.select_dtypes(include=['float64']).columns:
-   # df[col] = df[col].astype('float32')
+for col in df.select_dtypes(include=['float64']).columns:
+    df[col] = df[col].astype('float32')
 
 
 # Perform a random split on the entire combined dataframe

@@ -5,9 +5,11 @@ from sklearn.model_selection import LeaveOneGroupOut
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
+# Define sequence creating function which is essential for LSTM modeling
 def create_sequences(X, y, seq_len=48):
     """
     Builds a 3D array of shape (num_sequences, seq_len, num_features)
@@ -20,59 +22,47 @@ def create_sequences(X, y, seq_len=48):
         y_seq.append(y[i + seq_len])
     return np.array(X_seq), np.array(y_seq)
 
+# Read csv
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups.csv')
+print("loaded dataframe df")
+print(len(df))
 print(df.columns)
 
-# Example resampling code you have:
-def resample_sites_iterative(df, site_col='site_id', min_samples=2500, max_samples=3000, random_state=42):
-    for site in df[site_col].unique():
-        site_data = df[df[site_col] == site]
-        site_len = len(site_data)
+# Convert to numerical columns to float32 to save memory
+for col in tqdm(df.select_dtypes(include=["float64"]).columns):
+    df[col] = df[col].astype("float32")
 
-        if site_len > max_samples:
-            yield site_data.sample(n=max_samples, random_state=random_state)
-        elif site_len < min_samples:
-            yield site_data.sample(n=min_samples, replace=True, random_state=random_state)
-        else:
-            yield site_data
-
-df_balanced = pd.concat(
-    resample_sites_iterative(df, site_col='site_id', min_samples=2500, max_samples=3000),
-    axis=0
-)
-
-# We now have df_balanced with columns like 'GPP', 'cluster', 'site_id', plus features.
+print("converted float64 to float32 for saving memory")
 
 # Extract features and target
-features = [col for col in df_balanced.columns if col not in ['GPP', 'cluster', 'site_id']]
-X_full = df_balanced[features].values
-y_full = df_balanced['GPP'].values
-groups_full = df_balanced['cluster'].values  # or 'site_id' if that’s your grouping
-
+features = [col for col in df.columns if col not in ['GPP', 'cluster', 'site_id', 'Unnamed: 0']]
+X_full = df[features].values
+y_full = df['GPP'].values
+groups_full = df['cluster'].values  # or 'site_id' if that’s your grouping
 
 # Initialize LOGO
 logo = LeaveOneGroupOut()
 results = []
 
+print("initialized logo")
+
 seq_len = 48  # example sequence length
 num_epochs = 5  # or more, depending on your compute and data size
 batch_size = 32
 
-for train_idx, test_idx in logo.split(X_full, y_full, groups_full):
+for train_idx, test_idx in tqdm(logo.split(X_full, y_full, groups_full)):
     # Split into train/test
     X_train_raw, X_test_raw = X_full[train_idx], X_full[test_idx]
     y_train_raw, y_test_raw = y_full[train_idx], y_full[test_idx]
-    
-    # Optional: If train/test contain multiple sites, ensure sorting by time if needed
-    
+        
     # Scale X (MinMax or Standard)
     scaler = MinMaxScaler()
     X_train_scaled = scaler.fit_transform(X_train_raw)
     X_test_scaled = scaler.transform(X_test_raw)
 
     # Scale y (MinMax)
-    y_train_standard = (y_train_time_raw - y_train_time_raw.mean()) / (y_train_time_raw.max() - y_train_time_raw.min())
-    y_test_standard = (y_test_time_raw - y_train_time_raw.mean()) / (y_train_time_raw.max() - y_train_time_raw.min())
+    y_train_standard = (y_train_raw - y_train_raw.mean()) / (y_train_raw.max() - y_train_raw.min())
+    y_test_standard = (y_test_raw - y_test_raw.mean()) / (y_train_raw.max() - y_train_raw.min())
 
     # Create sequences
     X_train_seq, y_train_seq = create_sequences(X_train_scaled, y_train_standard, seq_len=seq_len)
@@ -92,12 +82,14 @@ for train_idx, test_idx in logo.split(X_full, y_full, groups_full):
     model.add(Dense(1))  # single-value output, e.g., GPP
     model.compile(loss='mse', optimizer='adam')
     
-    # Train the model
-    model.fit(X_train_seq, y_train_seq,
-              epochs=num_epochs,
-              batch_size=batch_size,
-              verbose=0)  # verbose=1 to see training progress
-    
+
+    train_dataset = tf.data.Dataset.from_tensor_slices((X_train_seq, y_train_seq))
+    # Batch & prefetch
+    train_dataset = train_dataset.batch(batch_size).prefetch(tf.data.AUTOTUNE)
+
+    # Fit on the dataset
+    model.fit(train_dataset, epochs=num_epochs, verbose=0)  # or verbose=1 for logs
+
     # Predict on test sequences
     y_pred = model.predict(X_test_seq)
     
