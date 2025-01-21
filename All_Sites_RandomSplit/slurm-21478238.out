@@ -1,0 +1,108 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+
+The following have been reloaded with a version change:
+  1) stack/.2024-04-silent => stack/2024-04
+
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+29283337
+train test split successfull
+          Unnamed: 0  ...  IGBP_veg_short_b'CVM'
+9078327      9078327  ...                    NaN
+21821541    21821541  ...                    NaN
+13540147    13540147  ...                    NaN
+15039274    15039274  ...                    NaN
+19750161    19750161  ...                    NaN
+
+[5 rows x 29 columns]
+          Unnamed: 0  ...  IGBP_veg_short_b'CVM'
+19076224    19076224  ...                    NaN
+7249115      7249115  ...                    NaN
+22495120    22495120  ...                    NaN
+27802287    27802287  ...                    NaN
+15295976    15295976  ...                    NaN
+
+[5 rows x 29 columns]
+now define X and y
+now scale
+scaled
+now set up model
+[11:32:28] WARNING: /workspace/src/objective/regression_obj.cu:152: reg:linear is now deprecated in favor of reg:squarederror.
+[11:32:28] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+being trained, make now predictions
+0.00027867893
+0.759844183921814
+0.01669368
+0.008652412
+Feature Importances:
+                  Feature  Importance
+5         SWdown_clearsky    0.343804
+12                   fPAR    0.290881
+3                  SWdown    0.105660
+6           LST_TERRA_Day    0.039762
+22  IGBP_veg_short_b'CRO'    0.033307
+1                    Tair    0.028487
+24  IGBP_veg_short_b'WET'    0.024686
+11                    LAI    0.023578
+7         LST_TERRA_Night    0.017669
+15  IGBP_veg_short_b'GRA'    0.011244
+2                     vpd    0.011090
+4                  LWdown    0.010655
+16  IGBP_veg_short_b'ENF'    0.009914
+20  IGBP_veg_short_b'DBF'    0.009722
+0              Unnamed: 0    0.006466
+17  IGBP_veg_short_b'SAV'    0.005426
+23  IGBP_veg_short_b'CSH'    0.005350
+13                   hour    0.005291
+21  IGBP_veg_short_b'OSH'    0.005277
+18  IGBP_veg_short_b'EBF'    0.005129
+19  IGBP_veg_short_b'WSA'    0.003161
+14   IGBP_veg_short_b'MF'    0.002597
+8                     EVI    0.000845
+9                    NIRv    0.000000
+10             NDWI_band7    0.000000
+25  IGBP_veg_short_b'CVM'    0.000000
+Feature Importances:
+                  Feature  Importance
+5         SWdown_clearsky    0.343804
+12                   fPAR    0.290881
+3                  SWdown    0.105660
+6           LST_TERRA_Day    0.039762
+22  IGBP_veg_short_b'CRO'    0.033307
+1                    Tair    0.028487
+24  IGBP_veg_short_b'WET'    0.024686
+11                    LAI    0.023578
+7         LST_TERRA_Night    0.017669
+15  IGBP_veg_short_b'GRA'    0.011244
+2                     vpd    0.011090
+4                  LWdown    0.010655
+16  IGBP_veg_short_b'ENF'    0.009914
+20  IGBP_veg_short_b'DBF'    0.009722
+0              Unnamed: 0    0.006466
+17  IGBP_veg_short_b'SAV'    0.005426
+23  IGBP_veg_short_b'CSH'    0.005350
+13                   hour    0.005291
+21  IGBP_veg_short_b'OSH'    0.005277
+18  IGBP_veg_short_b'EBF'    0.005129
+19  IGBP_veg_short_b'WSA'    0.003161
+14   IGBP_veg_short_b'MF'    0.002597
+8                     EVI    0.000845
+9                    NIRv    0.000000
+10             NDWI_band7    0.000000
+25  IGBP_veg_short_b'CVM'    0.000000
+Metrics and feature importances saved to XGB_AllSites_strat[20to25]_Random_Split_metrics_and_feature_importances.csv
