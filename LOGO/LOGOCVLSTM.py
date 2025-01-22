@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from tqdm import tqdm
 from sklearn.model_selection import LeaveOneGroupOut
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error

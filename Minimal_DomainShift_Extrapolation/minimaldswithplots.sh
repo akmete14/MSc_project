@@ -14,4 +14,5 @@ module spider gcc/8.5.0
 
 source /cluster/project/math/akmete/Setup/.venv/bin/activate
 
-python /cluster/project/math/akmete/MSc/Minimal_DomainShift_Extrapolation/MinimalDomainShift.py
+python /cluster/project/math/akmete/MSc/Minimal_DomainShift_Extrapolation/MinimalDomainShift_withplots.py
+

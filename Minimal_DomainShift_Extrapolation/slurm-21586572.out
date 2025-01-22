@@ -44,23 +44,11 @@ The following have been reloaded with a version change:
        'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
        'IGBP_veg_short_b'CVM''],
       dtype='object')
-  0%|          | 0/25 [00:00<?, ?it/s] 16%|█▌        | 4/25 [00:00<00:00, 36.40it/s] 32%|███▏      | 8/25 [00:00<00:00, 34.09it/s] 48%|████▊     | 12/25 [00:00<00:00, 35.99it/s] 68%|██████▊   | 17/25 [00:00<00:00, 39.09it/s] 92%|█████████▏| 23/25 [00:00<00:00, 44.04it/s]100%|██████████| 25/25 [00:00<00:00, 40.28it/s]
-  0%|          | 0/25 [00:00<?, ?it/s] 68%|██████▊   | 17/25 [00:00<00:00, 164.42it/s]100%|██████████| 25/25 [00:00<00:00, 173.62it/s]
+  0%|          | 0/25 [00:00<?, ?it/s] 20%|██        | 5/25 [00:00<00:00, 49.51it/s] 40%|████      | 10/25 [00:00<00:00, 47.90it/s] 64%|██████▍   | 16/25 [00:00<00:00, 49.44it/s] 88%|████████▊ | 22/25 [00:00<00:00, 49.33it/s]100%|██████████| 25/25 [00:00<00:00, 48.95it/s]
+  0%|          | 0/25 [00:00<?, ?it/s] 96%|█████████▌| 24/25 [00:00<00:00, 238.18it/s]100%|██████████| 25/25 [00:00<00:00, 231.07it/s]
 reduced to float32
 now start scaling
 scaled
-[22:30:43] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[14:04:52] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
 model fitted
-  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [00:02<00:20,  2.25s/it] 20%|██        | 2/10 [00:03<00:11,  1.45s/it] 30%|███       | 3/10 [00:03<00:07,  1.14s/it] 40%|████      | 4/10 [00:04<00:05,  1.03it/s] 50%|█████     | 5/10 [00:05<00:04,  1.17it/s] 60%|██████    | 6/10 [00:07<00:04,  1.20s/it] 70%|███████   | 7/10 [00:08<00:03,  1.29s/it] 80%|████████  | 8/10 [00:10<00:02,  1.32s/it] 90%|█████████ | 9/10 [00:10<00:01,  1.16s/it]100%|██████████| 10/10 [00:12<00:00,  1.22s/it]100%|██████████| 10/10 [00:12<00:00,  1.22s/it]
-Evaluation Metrics by Cluster:
-   cluster       mse        r2  num_samples
-0        0  0.000304  0.734145       830631
-1        1  0.000315  0.718212       442086
-2        2  0.000206  0.779821       362958
-3        3  0.000372  0.763954       363193
-4        4  0.000167  0.837730       318458
-5        5  0.000461  0.762371       990018
-6        6  0.000374  0.731875       776366
-7        7  0.000060  0.661921       707263
-8        8  0.000379  0.746056       379925
-9        9  0.000292  0.779763       685888
+  0%|          | 0/10 [00:00<?, ?it/s]/var/spool/slurm/slurmd/state/job21586572/slurm_script: line 17: 1623890 Bus error               python /cluster/project/math/akmete/MSc/Minimal_DomainShift_Extrapolation/MinimalDomainShift_withplots.py
