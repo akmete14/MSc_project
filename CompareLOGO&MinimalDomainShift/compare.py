@@ -1,75 +1,83 @@
 import pandas as pd
 import numpy as np
-
-df_logo = pd.read_csv('/cluster/project/math/akmete/MSc/LOGO/LOGOCVXGB_100hrs.csv')
-df_mds = pd.read_csv('/cluster/project/math/akmete/MSc/Minimal_DomainShift_Extrapolation/Metrics_MinimalDomainShift_XGB.csv')
-df_mds = df_mds.drop(columns=['Unnamed: 0', 'num_samples'])
-
-df_logo['rmse'] = np.sqrt(df_logo['mse'])
-df_mds['rmse'] = np.sqrt(df_mds['mse'])
-
-print(df_logo)
-print(df_mds)
-
 import matplotlib.pyplot as plt
 import os
 
-# Merge the DataFrames with different column names
+df_logo = pd.read_csv('/cluster/project/math/akmete/MSc/LOGO/LOGOCVXGB_all_metrics.csv')
+df_mds = pd.read_csv('/cluster/project/math/akmete/MSc/Minimal_DomainShift_Extrapolation/AllMetrics_MinimalDomainShift_XGB.csv')
+df_mds = df_mds.drop(columns=['num_samples'])
+
+# Compute RMSE for consistency
+df_logo['RMSE'] = np.sqrt(df_logo['mse'])
+df_mds['RMSE'] = np.sqrt(df_mds['mse'])
+
+# Rename columns for consistency
+df_logo = df_logo.rename(columns={
+    'group_left_out': 'group', 
+    'R2': 'r2', 
+    'Relative Error': 'RE'
+})
+df_mds = df_mds.rename(columns={'cluster': 'group'})
+
+# Merge the DataFrames
 comparison_df = pd.merge(
-    df_logo.rename(columns={'group_left_out': 'group'}),  # Rename for consistency
-    df_mds.rename(columns={'cluster': 'group'}),    # Rename for consistency
+    df_logo,
+    df_mds,
     on='group',
     suffixes=('_left_out', '_minimal_shift')
 )
 
-# Plot the comparison as a bar chart
-comparison_df.plot(
-    x='group',
-    y=['rmse_left_out', 'rmse_minimal_shift'],
-    kind='bar',
-    figsize=(12, 6),
-    title='RMSE Comparison for Each Group Across Settings'
-)
+# Debugging: Print the columns to verify
+print("Columns in comparison_df:", comparison_df.columns)
 
-# Customize the plot
-plt.ylabel('RMSE')
-plt.xlabel('Cluster')
-plt.xticks(rotation=45, ha='right')  # Rotate group labels for better readability
-plt.legend(['LOGO Setting', 'Minimal Domain Shift Setting'])
-plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.tight_layout()  # Adjust layout to prevent label overlap
+# Create folder for saving plots
+output_folder = os.path.join(os.getcwd(), "plots_comparison")
+os.makedirs(output_folder, exist_ok=True)
 
-# Save the figure in the current directory
-output_path = os.path.join(os.getcwd(), "rmse_comparison_plot.png")
-plt.savefig(output_path, dpi=300)  # Save with high resolution
-plt.close()  # Close the plot to free memory
+# Define the metrics to compare
+metrics = ['mse', 'RMSE', 'r2', 'RE', 'MAE']
 
-print(f"Plot saved at: {output_path}")
+# Create bar plots for each metric
+for metric in metrics:
+    comparison_df.plot(
+        x='group',
+        y=[f'{metric}_left_out', f'{metric}_minimal_shift'],
+        kind='bar',
+        figsize=(12, 6),
+        title=f'{metric.upper()} Comparison for Each Group Across Settings'
+    )
+    plt.ylabel(metric.upper())
+    plt.xlabel('Cluster')
+    plt.xticks(rotation=45, ha='right')  # Rotate group labels for better readability
+    plt.legend(['LOGO Setting', 'Minimal Domain Shift Setting'])
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
 
-import matplotlib.pyplot as plt
-import os
+    # Save the bar plot
+    output_path = os.path.join(output_folder, f"{metric.lower()}_barplot.png")
+    plt.savefig(output_path, dpi=300)
+    plt.close()  # Close the plot to free memory
+    print(f"{metric.upper()} bar plot saved at: {output_path}")
 
-# Prepare the data for the boxplot
+# Combined RMSE Boxplot
+plt.figure(figsize=(8, 6))
+
+# Add data for the two settings
 data = [
-    comparison_df['rmse_left_out'],
-    comparison_df['rmse_minimal_shift']
+    comparison_df['RMSE_left_out'],
+    comparison_df['RMSE_minimal_shift']
 ]
 
-# Create the boxplot
-plt.figure(figsize=(8, 6))
+# Create the combined RMSE boxplot
 plt.boxplot(data, labels=['LOGO Setting', 'Minimal Domain Shift Setting'])
-
-# Customize the plot
-plt.title('RMSE Distribution LOGO vs Minimal Domain Shift Setting')
+plt.title('RMSE Comparison Between LOGO and Minimal Domain Shift Settings')
 plt.ylabel('RMSE')
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
 
-# Save the boxplot in the current directory
-output_path = os.path.join(os.getcwd(), "rmse_boxplot.png")
+# Save the combined RMSE boxplot
+output_path = os.path.join(output_folder, "rmse_combined_boxplot.png")
 plt.savefig(output_path, dpi=300)
 plt.close()  # Close the plot to free memory
-
-print(f"Boxplot saved at: {output_path}")
-
+print(f"Combined RMSE boxplot saved at: {output_path}")
 
