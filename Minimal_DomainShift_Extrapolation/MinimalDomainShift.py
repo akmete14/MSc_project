@@ -67,15 +67,21 @@ for cluster_id, cluster_data in tqdm(df_test.groupby('cluster')):
     # Compute MSE (and optionally R^2)
     mse = mean_squared_error(y_cluster_standard, y_pred)
     r2 = r2_score(y_cluster_standard, y_pred)
-    
+    relative_error = np.mean(np.abs(y_cluster_standard - y_pred) / np.abs(y_cluster_standard))
+    mae = np.mean(np.abs(y_cluster_standard - y_pred))
+    rmse = np.sqrt(mse)
+
     results.append({
         'cluster': cluster_id,
         'mse': mse,
         'r2': r2,
+        'RE' : relative_error,
+        'MAE': mae,
+        'RMSE': rmse,
         'num_samples': len(cluster_data)  # optional info
     })
 
 results_df = pd.DataFrame(results)
-results_df.to_csv('Metrics_MinimalDomainShift_XGB.csv')
+results_df.to_csv('AllMetrics_MinimalDomainShift_XGB.csv')
 print("Evaluation Metrics by Cluster:")
 print(results_df)

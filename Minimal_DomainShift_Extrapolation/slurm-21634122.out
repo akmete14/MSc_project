@@ -1,0 +1,66 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+
+The following have been reloaded with a version change:
+  1) stack/.2024-04-silent => stack/2024-04
+
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+23426551 5856786    Unnamed: 0           GPP  ...  IGBP_veg_short_b'WET'  IGBP_veg_short_b'CVM'
+0           0 -2.190074e-08  ...                    NaN                    NaN
+1           1 -2.026436e-08  ...                    NaN                    NaN
+2           2 -2.037174e-08  ...                    NaN                    NaN
+3           3 -1.944209e-08  ...                    NaN                    NaN
+4           4 -1.816712e-08  ...                    NaN                    NaN
+
+[5 rows x 29 columns]    Unnamed: 0           GPP  ...  IGBP_veg_short_b'WET'  IGBP_veg_short_b'CVM'
+0       16297 -9.148815e-09  ...                    NaN                    NaN
+1       16298 -1.185117e-08  ...                    NaN                    NaN
+2       16299 -1.204643e-08  ...                    NaN                    NaN
+3       16300 -1.109531e-08  ...                    NaN                    NaN
+4       16301 -1.365915e-08  ...                    NaN                    NaN
+
+[5 rows x 29 columns] Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
+       'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv',
+       'NDWI_band7', 'LAI', 'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
+       'cluster', 'IGBP_veg_short_b'GRA'', 'IGBP_veg_short_b'ENF'',
+       'IGBP_veg_short_b'SAV'', 'IGBP_veg_short_b'EBF'',
+       'IGBP_veg_short_b'WSA'', 'IGBP_veg_short_b'DBF'',
+       'IGBP_veg_short_b'OSH'', 'IGBP_veg_short_b'CRO'',
+       'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
+       'IGBP_veg_short_b'CVM''],
+      dtype='object')
+  0%|          | 0/25 [00:00<?, ?it/s]  8%|▊         | 2/25 [00:00<00:01, 12.05it/s] 20%|██        | 5/25 [00:00<00:01, 17.76it/s] 28%|██▊       | 7/25 [00:00<00:01, 17.61it/s] 36%|███▌      | 9/25 [00:00<00:00, 16.18it/s] 48%|████▊     | 12/25 [00:00<00:00, 18.69it/s] 56%|█████▌    | 14/25 [00:00<00:00, 17.55it/s] 68%|██████▊   | 17/25 [00:00<00:00, 19.17it/s] 76%|███████▌  | 19/25 [00:01<00:00, 18.93it/s] 84%|████████▍ | 21/25 [00:01<00:00, 16.41it/s] 96%|█████████▌| 24/25 [00:01<00:00, 19.39it/s]100%|██████████| 25/25 [00:01<00:00, 18.21it/s]
+  0%|          | 0/25 [00:00<?, ?it/s] 44%|████▍     | 11/25 [00:00<00:00, 107.71it/s] 88%|████████▊ | 22/25 [00:00<00:00, 78.22it/s] 100%|██████████| 25/25 [00:00<00:00, 76.75it/s]
+reduced to float32
+now start scaling
+scaled
+[21:10:15] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+model fitted
+  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [00:02<00:20,  2.23s/it] 20%|██        | 2/10 [00:02<00:10,  1.30s/it] 30%|███       | 3/10 [00:03<00:06,  1.03it/s] 40%|████      | 4/10 [00:04<00:04,  1.24it/s] 50%|█████     | 5/10 [00:04<00:03,  1.43it/s] 60%|██████    | 6/10 [00:05<00:03,  1.10it/s] 70%|███████   | 7/10 [00:06<00:02,  1.04it/s] 80%|████████  | 8/10 [00:07<00:01,  1.03it/s] 90%|█████████ | 9/10 [00:08<00:00,  1.18it/s]100%|██████████| 10/10 [00:09<00:00,  1.14it/s]100%|██████████| 10/10 [00:09<00:00,  1.06it/s]
+Evaluation Metrics by Cluster:
+   cluster       mse        r2         RE       MAE      RMSE  num_samples
+0        0  0.000304  0.734145  29.457052  0.008760  0.017444       830631
+1        1  0.000315  0.718212   2.228206  0.009475  0.017755       442086
+2        2  0.000206  0.779821  22.231989  0.007536  0.014345       362958
+3        3  0.000372  0.763954   1.862791  0.009469  0.019286       363193
+4        4  0.000167  0.837730   1.606333  0.007345  0.012912       318458
+5        5  0.000461  0.762371   2.030227  0.012028  0.021475       990018
+6        6  0.000374  0.731875   2.272517  0.010001  0.019337       776366
+7        7  0.000060  0.661921   1.784172  0.004066  0.007730       707263
+8        8  0.000379  0.746056   1.998774  0.010801  0.019479       379925
+9        9  0.000292  0.779763   1.537273  0.008699  0.017088       685888

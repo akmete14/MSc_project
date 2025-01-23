@@ -23,7 +23,7 @@ def create_sequences(X, y, seq_len=48):
         y_seq.append(y[i + seq_len])
     return np.array(X_seq), np.array(y_seq)
 
-# Read csv
+# Read csv (Load in batches to reduce memory usage)
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups.csv')
 print("loaded dataframe df")
 print(len(df))
@@ -96,10 +96,14 @@ for train_idx, test_idx in tqdm(logo.split(X_full, y_full, groups_full)):
     
     # Evaluate (on the same scale we trained on)
     mse = mean_squared_error(y_test_seq, y_pred)
-    
+    r2 = r2_score(y_test_seq, y_pred)
+    relative_error = np.mean(np.abs(y_test_seq - y_pred) / np.abs(y_test_seq))
+    mae = np.mean(np.abs(y_test_seq - y_pred))
+    rmse = np.sqrt(mse)
+
     # Record results
     group_left_out = groups_full[test_idx][0]  # or 'site_id' if that's your grouping
-    results.append({'group_left_out': group_left_out, 'mse': mse})
+    results.append({'group_left_out': group_left_out, 'mse': mse, 'R2': r2, 'Relative Error': relative_error, 'MAE': mae, 'RMSE': rmse})
 
 # Convert results to DataFrame
 results_df = pd.DataFrame(results)

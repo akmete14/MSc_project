@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=4
 #SBATCH --time=120:00:00
-#SBATCH --mem-per-cpu=358400
+#SBATCH --mem-per-cpu=102400
 #SBATCH --mail-type=BEGIN,END
 #SBATCH --mail-user=akmete@student.ethz.ch
 
@@ -14,4 +14,4 @@ module spider gcc/8.5.0
 
 source /cluster/project/math/akmete/Setup/.venv/bin/activate
 
-python /cluster/project/math/akmete/MSc/LOGO/LOGOCVLSTM.py
+python /cluster/project/math/akmete/MSc/Minimal_DomainShift_Extrapolation/LSTM.py

@@ -9,41 +9,6 @@ import xarray as xr
 from xgboost import XGBRegressor
 from tqdm import tqdm
 
-# Define a function which resamples/undersamples so that we get the same amount of data from every site
-"""def resample_sites(df, site_col='site_id', min_samples=2500, max_samples=3000, random_state=42):
-    df_list = []
-    for site in df[site_col].unique():
-        site_data = df[df[site_col]==site]
-        site_len = len(site_data)
-
-        # Undersample if above max
-        if site_len > max_samples:
-            site_data = site_data.sample(n=max_samples, random_state=random_state)
-
-        # Oversample if below min
-        elif site_len < min_samples:
-            site_data = site_data.sample(n=min_samples, replace=True, random_state=random_state)
-
-        df_list.append(site_data)
-
-    df_balanced = pd.concat(df_list, axis=0)
-    return df_balanced
-def resample_sites_iterative(df, site_col='site_id', min_samples=2500, max_samples=3000, random_state=42):
-    for site in df[site_col].unique():
-        site_data = df[df[site_col] == site]
-        site_len = len(site_data)
-
-        if site_len > max_samples:
-            yield site_data.sample(n=max_samples, random_state=random_state)
-        elif site_len < min_samples:
-            yield site_data.sample(n=min_samples, replace=True, random_state=random_state)
-        else:
-            yield site_data
-
-df_balanced = pd.concat(resample_sites_iterative(df, site_col='site_id', min_samples=2500, max_samples=3000), axis=0)
-
-df_stratified = resample_sites(df, site_col='site_id', min_samples=2500, max_samples=3000)"""
-
 # Load data and reduce float64 to float32
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups.csv')
 for col in tqdm(df.select_dtypes(include=['float64']).columns):
@@ -94,9 +59,13 @@ for train_idx, test_idx in tqdm(logo.split(X, y, groups)):
     # Predict and evaluate
     y_pred = model.predict(X_test_scaled)
     mse = mean_squared_error(y_test_standard, y_pred)
+    r2 = r2_score(y_test_standard, y_pred)
+    relative_error = np.mean(np.abs(y_test_standard - y_pred) / np.abs(y_test_standard))
+    mae = np.mean(np.abs(y_test_standard - y_pred))
+    rmse = np.sqrt(mse)
     
     # Store results
-    results.append({'group_left_out': groups[test_idx][0], 'mse': mse})
+    results.append({'group_left_out': groups[test_idx][0], 'mse': mse, 'R2': r2, 'Relative Error': relative_error, 'MAE': mae, 'RMSE': rmse})
 
 # Convert results to a DataFrame for better visualization
 import pandas as pd
@@ -105,4 +74,4 @@ results_df = pd.DataFrame(results)
 # Display results
 print(results_df)
 
-results_df.to_csv('LOGOCVXGB_100hrs.csv', index=False)
+results_df.to_csv('LOGOCVXGB_all_metrics.csv', index=False)
