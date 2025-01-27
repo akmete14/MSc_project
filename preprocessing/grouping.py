@@ -59,16 +59,27 @@ for cluster_id, cluster_points in enumerate(clusters):
         cluster_labels[point_index] = cluster_id
 
 df_coordinates['group'] = cluster_labels
+print(df_coordinates['group'].value_counts())
 
 # Visualize grouping
-plt.figure(figsize=(8, 6))
+plt.figure(figsize=(8, 6))  # Smaller figure size
 for cluster_id in df_coordinates['group'].unique():
     cluster_points = df_coordinates[df_coordinates['group'] == cluster_id]
-    plt.scatter(cluster_points['longitude'], cluster_points['latitude'], label=f"Group {cluster_id}")
+    plt.scatter(
+        cluster_points['longitude'],
+        cluster_points['latitude'],
+        label=f"Group {cluster_id}",
+        s=20, alpha=0.7  # Smaller markers with transparency
+    )
 
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"KMedoids Clustering (n={n_clusters})")
-plt.legend()
-plt.savefig('grouping_equal_size.png')
+
+# Position the legend to the right of the plot
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), borderaxespad=0)
+
+# Adjust the layout to reduce plot size and make room for the legend
+plt.tight_layout(rect=[0, 0, 0.75, 1])
+
+plt.savefig('compact_plot_with_legend_next_to_plot.png')
 plt.close()

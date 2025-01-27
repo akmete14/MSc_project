@@ -66,7 +66,7 @@ def initialize_dataframe(file1, file2, file3, path):
         df_combined['hour'] = df_combined['time'].dt.hour
         df_combined = df_combined.drop(columns=['time'])
 
-    # Truncate rs so that same amount of rows as flux and meteo
+    # Extract good quality data
     df_combined = extract_good_quality(df_combined)
 
     # Add lagged variables, rolling mean and time features
