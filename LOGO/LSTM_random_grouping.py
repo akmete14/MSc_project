@@ -56,7 +56,7 @@ def make_sequence_dataset(X, y, seq_len=48, batch_size=32):
 ##########################
 
 # Load CSV
-df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups.csv')
+df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/groupings/df_random_grouping.csv')
 df.info(memory_usage='deep')
 print("loaded dataframe df")
 print(len(df))
@@ -181,5 +181,5 @@ for group_val in tqdm(unique_groups):
 
 # Save final table
 results_df = pd.DataFrame(results)
-results_df.to_csv("LOGOCV_LSTM.csv", index=False)
+results_df.to_csv("LSTM_random_grouping_all_metrics.csv", index=False)
 print("Done!")
