@@ -1,0 +1,69 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+
+The following have been reloaded with a version change:
+  1) stack/.2024-04-silent => stack/2024-04
+
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+
+  0%|          | 0/25 [00:00<?, ?it/s]
+ 16%|█▌        | 4/25 [00:00<00:00, 38.03it/s]
+ 36%|███▌      | 9/25 [00:00<00:00, 39.30it/s]
+ 56%|█████▌    | 14/25 [00:00<00:00, 39.72it/s]
+ 76%|███████▌  | 19/25 [00:00<00:00, 40.00it/s]
+ 96%|█████████▌| 24/25 [00:00<00:00, 40.08it/s]
+100%|██████████| 25/25 [00:00<00:00, 39.29it/s]
+Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
+       'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv',
+       'NDWI_band7', 'LAI', 'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
+       'cluster', 'IGBP_veg_short_b'GRA'', 'IGBP_veg_short_b'ENF'',
+       'IGBP_veg_short_b'SAV'', 'IGBP_veg_short_b'EBF'',
+       'IGBP_veg_short_b'WSA'', 'IGBP_veg_short_b'DBF'',
+       'IGBP_veg_short_b'OSH'', 'IGBP_veg_short_b'CRO'',
+       'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
+       'IGBP_veg_short_b'CVM''],
+      dtype='object')
+
+0it [00:00, ?it/s]
+0it [27:59, ?it/s]
+[13:37:00] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+Traceback (most recent call last):
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 2606, in pandas._libs.hashtable.Int64HashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 2630, in pandas._libs.hashtable.Int64HashTable.get_item
+KeyError: 0
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/cluster/project/math/akmete/MSc/LOSO/XGB.py", line 77, in <module>
+    results.append({'site_left_out': groups[test_idx][0], 'mse': mse, 'R2': r2, 'Relative Error': relative_error, 'MAE': mae, 'RMSE': rmse})
+                                     ~~~~~~~~~~~~~~~~^^^
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/pandas/core/series.py", line 1121, in __getitem__
+    return self._get_value(key)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/pandas/core/series.py", line 1237, in _get_value
+    loc = self.index.get_loc(label)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 0
