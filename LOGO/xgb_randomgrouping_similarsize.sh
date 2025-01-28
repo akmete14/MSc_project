@@ -2,8 +2,8 @@
 
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
-#SBATCH --time=120:00:00
-#SBATCH --mem-per-cpu=61440
+#SBATCH --time=10:00:00
+#SBATCH --mem-per-cpu=35840
 #SBATCH --mail-type=BEGIN,END
 #SBATCH --mail-user=akmete@student.ethz.ch
 
@@ -14,4 +14,5 @@ module spider gcc/8.5.0
 
 source /cluster/project/math/akmete/Setup/.venv/bin/activate
 
-python /cluster/project/math/akmete/MSc/LOGO/LOGOCVLSTM.py
+python /cluster/project/math/akmete/MSc/LOGO/XGB_random_grouping_constrained_similar_size.py
+
