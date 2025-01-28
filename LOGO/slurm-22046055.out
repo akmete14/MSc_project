@@ -28,3 +28,61 @@ E0000 00:00:1738058550.396239 3799545 cuda_dnn.cc:8310] Unable to register cuDNN
 E0000 00:00:1738058550.427654 3799545 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
 2025-01-28 11:02:30.703269: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
 To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 29283337 entries, 0 to 29283336
+Data columns (total 28 columns):
+ #   Column                 Dtype  
+---  ------                 -----  
+ 0   GPP                    float64
+ 1   Tair                   float64
+ 2   vpd                    float64
+ 3   SWdown                 float64
+ 4   LWdown                 float64
+ 5   SWdown_clearsky        float64
+ 6   LST_TERRA_Day          float64
+ 7   LST_TERRA_Night        float64
+ 8   EVI                    float64
+ 9   NIRv                   float64
+ 10  NDWI_band7             float64
+ 11  LAI                    float64
+ 12  fPAR                   float64
+ 13  hour                   int64  
+ 14  IGBP_veg_short_b'MF'   float64
+ 15  site_id                object 
+ 16  IGBP_veg_short_b'GRA'  float64
+ 17  IGBP_veg_short_b'ENF'  float64
+ 18  IGBP_veg_short_b'SAV'  float64
+ 19  IGBP_veg_short_b'EBF'  float64
+ 20  IGBP_veg_short_b'WSA'  float64
+ 21  IGBP_veg_short_b'DBF'  float64
+ 22  IGBP_veg_short_b'OSH'  float64
+ 23  IGBP_veg_short_b'CRO'  float64
+ 24  IGBP_veg_short_b'CSH'  float64
+ 25  IGBP_veg_short_b'WET'  float64
+ 26  IGBP_veg_short_b'CVM'  float64
+ 27  cluster                int64  
+dtypes: float64(25), int64(2), object(1)
+memory usage: 7.6 GB
+loaded dataframe df
+29283337
+Index(['GPP', 'Tair', 'vpd', 'SWdown', 'LWdown', 'SWdown_clearsky',
+       'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv', 'NDWI_band7', 'LAI',
+       'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
+       'IGBP_veg_short_b'GRA'', 'IGBP_veg_short_b'ENF'',
+       'IGBP_veg_short_b'SAV'', 'IGBP_veg_short_b'EBF'',
+       'IGBP_veg_short_b'WSA'', 'IGBP_veg_short_b'DBF'',
+       'IGBP_veg_short_b'OSH'', 'IGBP_veg_short_b'CRO'',
+       'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
+       'IGBP_veg_short_b'CVM'', 'cluster'],
+      dtype='object')
+  0%|          | 0/25 [00:00<?, ?it/s] 20%|██        | 5/25 [00:00<00:00, 44.37it/s] 40%|████      | 10/25 [00:00<00:00, 45.02it/s] 60%|██████    | 15/25 [00:00<00:00, 45.22it/s] 80%|████████  | 20/25 [00:00<00:00, 45.28it/s]100%|██████████| 25/25 [00:00<00:00, 43.88it/s]100%|██████████| 25/25 [00:00<00:00, 44.39it/s]
+converted float64 to float32 for saving memory
+  0%|          | 0/10 [00:00<?, ?it/s]2025-01-28 11:04:11.961661: E external/local_xla/xla/stream_executor/cuda/cuda_driver.cc:152] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected
+/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/keras/src/layers/rnn/rnn.py:200: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(**kwargs)
+2025-01-28 12:48:38.060928: I tensorflow/core/framework/local_rendezvous.cc:405] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/keras/src/trainers/epoch_iterator.py:151: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2025-01-28 14:32:29.082671: I tensorflow/core/framework/local_rendezvous.cc:405] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]

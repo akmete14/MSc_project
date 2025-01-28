@@ -31,4 +31,25 @@ Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
        'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
        'IGBP_veg_short_b'CVM'', 'cluster'],
       dtype='object')
-0it [00:00, ?it/s]1it [32:05, 1925.44s/it]
+0it [00:00, ?it/s]1it [32:05, 1925.44s/it]2it [1:07:10, 2031.14s/it]3it [1:41:45, 2051.00s/it]4it [2:16:16, 2059.02s/it]5it [2:51:04, 2069.60s/it]6it [3:25:54, 2076.57s/it]7it [3:59:03, 2047.69s/it]8it [4:31:33, 2016.74s/it]9it [5:06:11, 2035.84s/it]10it [5:44:17, 2112.98s/it]10it [5:44:17, 2065.72s/it]
+[09:56:04] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[10:28:11] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[11:03:17] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[11:37:47] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[12:12:17] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[12:47:08] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[13:22:04] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[13:55:04] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[14:27:30] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[15:02:10] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+   group_left_out       mse        R2  Relative Error       MAE      RMSE
+0               1  0.000280  0.717966        0.015466  0.008422  0.016726
+1               2  0.000528  0.684222        0.024269  0.011087  0.022978
+2               3  0.000303  0.749016        0.017144  0.009403  0.017415
+3               4  0.000380  0.724363        0.018018  0.009902  0.019488
+4               5  0.000224  0.735421        0.014593  0.007862  0.014977
+5               6  0.000357  0.689903        0.018066  0.009874  0.018890
+6               7  0.000364  0.688159        0.016719  0.009192  0.019077
+7               8  0.000248  0.776325        0.015512  0.008381  0.015753
+8               9  0.000226  0.796848        0.014279  0.007780  0.015036
+9              10  0.000344  0.755675        0.017320  0.009643  0.018548
