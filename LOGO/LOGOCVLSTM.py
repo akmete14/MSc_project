@@ -57,6 +57,9 @@ def make_sequence_dataset(X, y, seq_len=48, batch_size=32):
 
 # Load CSV
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups.csv')
+print(f"Initialized dataframe for site {site}: {df.shape}")  # Debug
+df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
+df = df.dropna()
 df.info(memory_usage='deep')
 print("loaded dataframe df")
 print(len(df))
