@@ -3,7 +3,7 @@
 #SBATCH --output=slurm_%A_%a.out
 #SBATCH --error=slurm_%A_%a.err
 #SBATCH --array=0-289
-#SBATCH --time=50:00:00
+#SBATCH --time=120:00:00
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=35840  # for example
 
