@@ -3,7 +3,7 @@ import torch
 from torch.autograd import grad
 import argparse
 import numpy as np
-import multiprocessing as mp
+import os
 print("modules and torch imported")
 
 ############################
@@ -41,27 +41,33 @@ for site, group in df.groupby('site_id'):
 
 # Define scaling #
 # Define Min-Max Scaling (X and Y)
-def scale_environments(train_environments, test_environments):
-    train_x = torch.cat([env[0] for env in train_environments], dim=0)
-    train_y = torch.cat([env[1] for env in train_environments], dim=0)
+def scale_environment(environment):
+    """
+    Scales a single environment (tuple of tensors: (X, y)) using min-max scaling.
+    """
+    x, y = environment
+    # Compute min and max for features in this environment
+    min_x, _ = torch.min(x, dim=0)
+    max_x, _ = torch.max(x, dim=0)
+    # Compute min and max for the target in this environment
+    min_y, _ = torch.min(y, dim=0)
+    max_y, _ = torch.max(y, dim=0)
 
-    min_x, _ = torch.min(train_x, dim=0)
-    max_x, _ = torch.max(train_x, dim=0)
-    min_y, _ = torch.min(train_y, dim=0)
-    max_y, _ = torch.max(train_y, dim=0)
+    # Avoid division by zero
+    diff_x = max_x - min_x
+    diff_x[diff_x == 0] = 1
 
-    def minmax_scale_x(x):
-        diff = max_x - min_x
-        diff[diff == 0] = 1  # Avoid division by zero
-        return (x - min_x) / diff
-        #return (x - min_x) / (max_x - min_x + 1e-8)
+    # Scale the features and target
+    scaled_x = (x - min_x) / diff_x
+    scaled_y = (y - min_y) / (max_y - min_y + 1e-8)
 
-    def minmax_scale_y(y):
-        return (y - min_y) / (max_y - min_y + 1e-8)
+    return (scaled_x, scaled_y)
 
-    scaled_train_envs = [(minmax_scale_x(x), minmax_scale_y(y)) for x, y in train_environments]
-    scaled_test_envs = [(minmax_scale_x(x), minmax_scale_y(y)) for x, y in test_environments]
-
+def scale_environments_independent(train_environments, test_environments):
+    # Scale each training environment independently
+    scaled_train_envs = [scale_environment(env) for env in train_environments]
+    # Scale each test environment independently
+    scaled_test_envs = [scale_environment(env) for env in test_environments]
     return scaled_train_envs, scaled_test_envs
 
 
@@ -124,16 +130,23 @@ class IRM:
 ### LOEO-CV  ###
 ################
 
+    # Define training parameters
+args = {
+        "lr": 0.01,
+        "n_iterations": 5000,
+        "verbose": False  # Turn off verbose logging for cluster jobs
+}
+    
 site_ids = df['site_id'].unique()[:len(environments)]
 
-# Define LOEO function
-def run_loeo_fold(i, environments, site_ids, args):
-    # Select train and test environments for fold i
-    train_environments = [env for j, env in enumerate(environments) if j != i]
-    test_environment = [environments[i]]
+def run_fold(fold_index):
     
-    # Scale the data using your scaling function
-    scaled_train_envs, scaled_test_envs = scale_environments(train_environments, test_environment)
+    # Leave out the fold specified by fold_index
+    train_environments = [env for j, env in enumerate(environments) if j != fold_index]
+    test_environment = [environments[fold_index]]
+    
+    # Scale the data
+    scaled_train_envs, scaled_test_envs = scale_environments_independent(train_environments, test_environment)
     
     # Train the model on the training environments
     irm_model = IRM(scaled_train_envs, args)
@@ -144,34 +157,23 @@ def run_loeo_fold(i, environments, site_ids, args):
     test_mse = ((y_pred_scaled - y_test) ** 2).mean().item()
     test_rmse = np.sqrt(test_mse)
     
-    print(f"Fold {i}: Site {site_ids[i]} - Test MSE: {test_mse:.5f}, Test RMSE: {test_rmse:.5f}")
-    return (site_ids[i], test_mse, test_rmse)
-
+    print(f"Fold {fold_index}: Site {site_ids[fold_index]} - Test MSE: {test_mse:.5f}, Test RMSE: {test_rmse:.5f}")
+    
+    # Save results to a CSV file. Each job writes its own CSV file.
+    results_df = pd.DataFrame([{
+        'site_id': site_ids[fold_index],
+        'mse': test_mse,
+        'rmse': test_rmse
+    }])
+    
+    # Create an output directory if it doesn't exist
+    os.makedirs("results", exist_ok=True)
+    output_filename = os.path.join("results", f"fold_{fold_index}_results.csv")
+    results_df.to_csv(output_filename, index=False)
 
 if __name__ == '__main__':
-    # Define parameters for training
-    args = {
-        "lr": 0.01,           # Learning rate
-        "n_iterations": 5000, # Training iterations
-        "verbose": False      # Turn off verbose printing to avoid clutter in parallel output
-    }
+    parser = argparse.ArgumentParser(description="Run a single LOEO fold.")
+    parser.add_argument("fold", type=int, help="Index of the fold to leave out (0-9)")
+    args_parsed = parser.parse_args()
     
-    # Assume `environments` and `site_ids` have already been defined as in your original code.
-    site_ids = df['site_id'].unique()[:len(environments)]
-    
-    # Create a multiprocessing Pool with as many processes as there are CPU cores
-    pool = mp.Pool(processes=mp.cpu_count())
-    
-    # Prepare the list of arguments for each fold
-    fold_args = [(i, environments, site_ids, args) for i in range(len(environments))]
-    
-    # Run LOEO folds in parallel using starmap to unpack the tuple arguments
-    results = pool.starmap(run_loeo_fold, fold_args)
-    
-    # Clean up the pool
-    pool.close()
-    pool.join()
-    
-    # Collect and save results
-    results_df = pd.DataFrame(results, columns=['site_id', 'mse', 'rmse'])
-    results_df.to_csv('Leave-One-Environment-Out_10sites.csv', index=False)
+    run_fold(args_parsed.fold)
