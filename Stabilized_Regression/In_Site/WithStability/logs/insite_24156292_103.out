@@ -1,0 +1,31 @@
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+Columns: Index(['GPP', 'Tair', 'vpd', 'SWdown', 'LWdown', 'SWdown_clearsky',
+       'IGBP_veg_short', 'LST_TERRA_Day', 'LST_TERRA_Night', 'LAI', 'fPAR',
+       'site_id'],
+      dtype='object')
+Loaded dataframe.
+Number of subsets: 1023
+Processing site: ES-LgS
+Stability threshold (alpha_stab): 2.7851694540004246e-05
+For site ES-LgS G_hat count: 104
+For site ES-LgS O_hat count: 8
+O_hat subsets for site ES-LgS : [['Tair', 'vpd', 'SWdown', 'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'LAI'], ['Tair', 'vpd', 'SWdown', 'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'fPAR'], ['Tair', 'vpd', 'SWdown', 'LWdown', 'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'LAI'], ['Tair', 'vpd', 'SWdown', 'LWdown', 'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'fPAR'], ['Tair', 'vpd', 'SWdown', 'SWdown_clearsky', 'IGBP_veg_short', 'LST_TERRA_Day', 'LST_TERRA_Night', 'LAI'], ['Tair', 'vpd', 'SWdown', 'SWdown_clearsky', 'IGBP_veg_short', 'LST_TERRA_Day', 'LST_TERRA_Night', 'fPAR'], ['Tair', 'vpd', 'SWdown', 'LWdown', 'SWdown_clearsky', 'IGBP_veg_short', 'LST_TERRA_Day', 'LST_TERRA_Night', 'LAI'], ['Tair', 'vpd', 'SWdown', 'LWdown', 'SWdown_clearsky', 'IGBP_veg_short', 'LST_TERRA_Day', 'LST_TERRA_Night', 'fPAR']]
+Site ES-LgS Ensemble MSE (scaled): 0.004489677360573247
+Site ES-LgS Full model MSE (scaled): 0.004526237025856972
+Results saved to results_site_ES-LgS.csv
