@@ -12,6 +12,6 @@ merged_df = pd.concat(df_list, ignore_index=True)
 merged_df = merged_df.sort_values(by='site')
 
 # Save the merged and sorted DataFrame to a new CSV
-merged_df.to_csv("results.csv", index=False)
+merged_df.to_csv("results_2.csv", index=False)
 
 print("Merged CSV saved as merged_results_LOSO.csv")
