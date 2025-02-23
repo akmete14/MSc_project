@@ -64,7 +64,7 @@ plt.figure(figsize=(8, 6))
 sns.boxplot(x="Model", y="RMSE", data=df_melted)
 plt.xlabel("Model")
 plt.ylabel("RMSE")
-plt.title("LOSO RMSE Distribution")
+#plt.title("LOSO RMSE Distribution")
 plt.savefig("XGB_LSTM_IRM_RMSEdistribution.png", dpi=300)
 
 # Histogram with KDE (without outliers)
@@ -81,7 +81,7 @@ plt.xticks(np.arange(0, 0.05, 0.01))
 plt.ticklabel_format(style='plain', axis='x')
 plt.xlabel("RMSE")
 plt.ylabel("Count of Sites")
-plt.title("LOSO Histogram of RMSE")
+#plt.title("LOSO Histogram of RMSE")
 plt.tight_layout()
 plt.savefig("histogram_RMSE.png", dpi=300)
 
@@ -129,7 +129,7 @@ for i, site in enumerate(selected_sites):  # Use the correct variable
 plt.xticks(x_positions, models)  # Set x-axis labels
 plt.xlabel("Model")
 plt.ylabel("RMSE")
-plt.title("RMSE LOSO Across Models")
+#plt.title("RMSE LOSO Across Models")
 plt.grid(True, linestyle="--", alpha=0.5)
 
 # Show the plot

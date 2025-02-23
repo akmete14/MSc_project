@@ -4,13 +4,9 @@ from torch.autograd import grad
 import argparse
 import numpy as np
 import os
+from tqdm import tqdm
 print("modules and torch imported")
 
-############################
-### MAKE DATAFRAME READY ###
-############################
-
-df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_nonans.csv')
 
 # --- Define the scaling function ---
 def scale_environments(train_environments, test_environments):
@@ -89,7 +85,16 @@ class IRM:
 
 def main(site_index):
     # Load your full dataset (adjust the path as needed)
-    df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_nonans.csv')
+    df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
+    df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
+    df = df.fillna(0)
+    df = df.drop(columns=['Unnamed: 0','cluster'])
+    for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
+        df[col] = df[col].astype('float32')
+
+    # Define features and target
+    feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
+    target_column = "GPP"
 
     # Get unique sites
     unique_sites = df['site_id'].unique()
@@ -101,13 +106,6 @@ def main(site_index):
     
     # Filter data for the chosen site
     site_data = df[df['site_id'] == chosen_site].copy()
-    
-    # Drop 'Unnamed: 0' and 'cluster' columns
-    df = df.drop(columns=['Unnamed: 0', 'cluster'])
-
-    # Define feature and target columns (adjust if needed)
-    feature_columns = [col for col in site_data.columns if col not in ['GPP', 'site_id']]
-    target_column = "GPP"
 
     # Split data into 80% training and 20% test
     n = len(site_data)
@@ -129,7 +127,7 @@ def main(site_index):
     scaled_train_envs, scaled_test_envs = scale_environments([train_env], [test_env])
 
     # Set training parameters
-    args_params = {"lr": 0.01, "n_iterations": 5000, "verbose": False}
+    args_params = {"lr": 0.01, "n_iterations": 1000, "verbose": False}
 
     # Train the IRM model (here, the environments list is [training, test])
     irm_model = IRM(scaled_train_envs + scaled_test_envs, args_params)

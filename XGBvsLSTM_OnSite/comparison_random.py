@@ -34,7 +34,7 @@ for metric in metrics:
     plt.bar([p + 0.4 for p in x], subset[f'{metric}_lstm'], width=0.4, label='LSTM', align='center')
     plt.xticks([p + 0.2 for p in x], subset['site'], rotation=90)
     plt.ylabel(metric)
-    plt.title(f'Comparison of {metric} for Selected Sites')
+    # plt.title(f'Comparison of {metric} for Selected Sites')
     plt.legend()
     plt.tight_layout()
     # Save the plot
@@ -53,7 +53,7 @@ plt.boxplot(
     [xgb_rmse, lstm_rmse],
     tick_labels=['XGBoost RMSE', 'LSTM RMSE']
 )
-plt.title('Comparison of RMSE Distributions On Site Extrapolation in Time')
+# plt.title('Comparison of RMSE Distributions On Site Extrapolation in Time')
 plt.ylabel('RMSE')
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()

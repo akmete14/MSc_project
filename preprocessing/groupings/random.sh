@@ -2,8 +2,8 @@
 
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --time=01:00:00
-#SBATCH --mem-per-cpu=35844
+#SBATCH --time=00:10:00
+#SBATCH --mem-per-cpu=20000
 #SBATCH --mail-type=BEGIN,END
 #SBATCH --mail-user=akmete@student.ethz.ch
 

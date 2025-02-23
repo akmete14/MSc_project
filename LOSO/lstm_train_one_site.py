@@ -34,7 +34,7 @@ def create_sequences(X, y, seq_length=10):
 def main(site_arg):
 
     # 1) Load data
-    df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups.csv')
+    df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_nonans.csv')
 
     # 2) Convert float64 to float32 for memory savings
     for col in df.select_dtypes(include=["float64"]).columns:
@@ -45,7 +45,7 @@ def main(site_arg):
     target_col = "GPP"     # The column we want to predict
 
     # Non-feature columns
-    non_features = [target_col, site_col, "Unnamed: 0", "cluster"]
+    non_features = [target_col, site_col, "cluster"]
     features = [c for c in df.columns if c not in non_features]
 
     # 4) Convert site_arg to site ID if needed

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # Read the dataframe
-df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups.csv')
+df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 print(df.columns)
 
 # Get rid of cluster and Unnamed: 0 columns

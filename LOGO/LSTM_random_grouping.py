@@ -14,7 +14,7 @@ from tensorflow.keras.layers import LSTM, Dense
 ##########################
 # 1) CREATE A DATASET PIPELINE FOR SEQUENCES
 ##########################
-def make_sequence_dataset(X, y, seq_len=48, batch_size=32):
+def make_sequence_dataset(X, y, seq_len=10, batch_size=32):
     """
     Creates a tf.data.Dataset of (x_seq, y_seq) pairs where:
     - Each x_seq is of shape [seq_len, num_features].
@@ -57,9 +57,8 @@ def make_sequence_dataset(X, y, seq_len=48, batch_size=32):
 
 # Load CSV
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/groupings/df_random_grouping.csv')
-print(f"Initialized dataframe for site {site}: {df.shape}")  # Debug
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.dropna()
+df = df.fillna(0)
 df.info(memory_usage='deep')
 print("loaded dataframe df")
 print(len(df))
@@ -76,7 +75,7 @@ groups = df['cluster']  # or df['site_id']
 unique_groups = groups.unique()
 results = []
 
-seq_len = 48
+seq_len = 10
 num_epochs = 5
 batch_size = 32
 

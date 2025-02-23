@@ -18,7 +18,7 @@ metrics = ["mse", "R2", "Relative Error", "MAE", "RMSE"]
 for metric in metrics:
     plt.figure(figsize=(10, 6))
     sns.barplot(data=df, x="group_left_out", y=metric, color="skyblue")
-    plt.title(f"Barplot of {metric}")
+    # plt.title(f"Barplot of {metric}")
     plt.xlabel("Group Left Out")
     plt.ylabel(metric)
     plt.xticks(rotation=45)    # Rotate x-labels if many groups
@@ -29,7 +29,7 @@ for metric in metrics:
 # 4) Boxplot for RMSE
 plt.figure(figsize=(6, 6))
 sns.boxplot(data=df, y="RMSE", color="lightgreen")
-plt.title("Boxplot of RMSE across groups")
+# plt.title("Boxplot of RMSE across groups")
 plt.ylabel("RMSE")
 plt.tight_layout()
 plt.savefig("plots_balanced_grouping/RMSE_boxplot.png")

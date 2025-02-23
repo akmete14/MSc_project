@@ -79,10 +79,14 @@ def initialize_dataframe(file1, file2, file3, path):
     df_combined = df_combined.reset_index(drop=True)
 
     # Handle categorical variables
+    # Handle categorical variables
     string_column = 'IGBP_veg_short'
     if string_column in df_combined.columns:
-        one_hot_encoded = pd.get_dummies(df_combined[string_column], prefix=string_column, dtype=int)
-        df_combined = pd.concat([df_combined.drop(columns=[string_column]), one_hot_encoded], axis=1)
+        from sklearn.preprocessing import LabelEncoder
+        le = LabelEncoder()
+        # Replace the string column with its encoded numeric version
+        df_combined[string_column] = le.fit_transform(df_combined[string_column])
+
 
     # Drop quality control columns
     columns_to_drop = df_combined.filter(regex='_qc$').columns
@@ -112,4 +116,4 @@ print("total dataframe initialized")
 # Combine all sites into one dataframe
 full_dataframe = pd.concat(dataframes, ignore_index=True)
 print("total dataframe concatenated")
-full_dataframe.to_csv('df_balanced_groups.csv')
+full_dataframe.to_csv('df_balanced_groups_onevegindex.csv')

@@ -44,6 +44,8 @@ for train_idx, test_idx in tqdm(logo.split(X, y, groups)):
     group_train = groups[train_idx]  # groups for the training subset
     group_test  = groups[test_idx]   # groups for the test subset
 
+    site_train = df["site_id"].values[train_idx]
+
     # 1) Compute sample weights for training
     sample_weight = np.zeros_like(y_train, dtype=np.float32)
 
