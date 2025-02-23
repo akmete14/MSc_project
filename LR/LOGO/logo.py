@@ -73,9 +73,11 @@ for test_cluster in clusters_to_process:
     mse = mean_squared_error(y_test_scaled, y_pred_scaled)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test_scaled, y_pred_scaled)
+    relative_error = np.mean(np.abs(y_test_scaled - y_pred_scaled) / np.abs(y_test_scaled))
+    mae = np.mean(np.abs(y_test_scaled - y_pred_scaled))
     
     # Save the model and metrics for the held-out group.
-    results[test_cluster] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2': r2}
+    results[test_cluster] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2': r2, 'relative_error': relative_error, 'mae': mae}
     print(f"Left-out cluster {test_cluster}: MSE = {mse:.4f}, RMSE = {rmse:.4f}, R2 = {r2:.4f}")
 
 # Save the results to CSV.
@@ -83,7 +85,7 @@ if 'SLURM_ARRAY_TASK_ID' in os.environ:
     # When running as a SLURM array job, save the result for the single held-out cluster.
     output_filename = f"results_LOGO_{clusters_to_process[0]}.csv"
     results_df = pd.DataFrame([
-        {'cluster_left_out': cluster, 'mse': info['mse'], 'rmse': info['rmse'], 'r2': info['r2']}
+        {'cluster_left_out': cluster, 'mse': info['mse'], 'rmse': info['rmse'], 'r2': info['r2'], 'relative_error': info['relative_error'], 'mae': info['mae']}
         for cluster, info in results.items()
     ])
     results_df.to_csv(output_filename, index=False)
@@ -91,7 +93,7 @@ if 'SLURM_ARRAY_TASK_ID' in os.environ:
 else:
     # When processing all clusters sequentially, combine results into one CSV file.
     results_df = pd.DataFrame([
-        {'cluster_left_out': cluster, 'mse': info['mse'], 'rmse': info['rmse'], 'r2': info['r2']}
+        {'cluster_left_out': cluster, 'mse': info['mse'], 'rmse': info['rmse'], 'r2': info['r2'], 'relative_error': info['relative_error'], 'mae': info['mae']}
         for cluster, info in results.items()
     ])
     results_df = results_df.sort_values(by='cluster_left_out')
