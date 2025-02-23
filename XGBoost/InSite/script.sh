@@ -4,7 +4,7 @@
 #SBATCH --output=in_site_xgb_%A_%a.out
 #SBATCH --error=in_site_xgb_%A_%a.err
 #SBATCH --array=0-289    # e.g., if you have 50 sites, use 0-49
-#SBATCH --time=24:00:00
+#SBATCH --time=10:00:00
 #SBATCH --mem-per-cpu=20000
 
 module load stack/.2024-04-silent

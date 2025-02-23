@@ -94,7 +94,7 @@ for site in tqdm(sites_to_process, desc="Processing sites"):
     print(f"Site {site}: MSE={mse:.6f}, R2={r2:.6f}, RelError={relative_error:.6f}, MAE={mae:.6f}, RMSE={rmse:.6f}")
     
     # Store the model and performance metrics for the site
-    results[site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2_score': r2}
+    results[site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2_score': r2, 'relative_error': relative_error, 'mae': mae}
 
 # Save the results as CSV.
 if 'SLURM_ARRAY_TASK_ID' in os.environ:
@@ -102,7 +102,9 @@ if 'SLURM_ARRAY_TASK_ID' in os.environ:
     results_df = pd.DataFrame([{'site': site,
                                  'mse': result['mse'],
                                  'rmse': result['rmse'],
-                                 'r2_score': result['r2_score']} 
+                                 'r2_score': result['r2_score'],
+                                 'relative_error': result['relative_error'],
+                                 'mae': result['mae']} 
                                 for site, result in results.items()])
     results_df.to_csv(output_filename, index=False)
     print(f"Results saved to {output_filename}")
@@ -110,7 +112,9 @@ else:
     results_df = pd.DataFrame([{'site': site,
                                  'mse': result['mse'],
                                  'rmse': result['rmse'],
-                                 'r2_score': result['r2_score']} 
+                                 'r2_score': result['r2_score'],
+                                 'relative_error': result['relative_error'],
+                                 'mae': result['mae']} 
                                 for site, result in results.items()])
     results_df = results_df.sort_values(by='site')
     results_df.to_csv("site_results.csv", index=False)
