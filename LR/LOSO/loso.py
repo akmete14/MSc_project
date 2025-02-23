@@ -71,9 +71,11 @@ for test_site in sites_to_process:
     mse = mean_squared_error(y_test_scaled, y_pred_scaled)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test_scaled, y_pred_scaled)
+    relative_error = np.mean(np.abs(y_test_scaled - y_pred_scaled) / np.abs(y_test_scaled))
+    mae = np.mean(np.abs(y_test_scaled - y_pred_scaled))
     
     # Store the model and performance metrics for the left-out site
-    results[test_site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2': r2}
+    results[test_site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2': r2, 'relative_error': relative_error, 'mae': mae}
     print(f"Left out site {test_site}: MSE = {mse:.4f}, RMSE = {rmse:.4f}, R2 = {r2:.4f}")
 
 # Save the results as CSV
@@ -81,7 +83,7 @@ if 'SLURM_ARRAY_TASK_ID' in os.environ:
     # Save individual fold result when running as a SLURM array job
     output_filename = f"results_LOSO_{sites_to_process[0]}.csv"
     results_df = pd.DataFrame([
-        {'site_left_out': site, 'mse': info['mse'], 'rmse': info['rmse'], 'r2': info['r2']}
+        {'site_left_out': site, 'mse': info['mse'], 'rmse': info['rmse'], 'r2': info['r2'], 'relative_error': info['relative_error'], 'mae': info['mae']}
         for site, info in results.items()
     ])
     results_df.to_csv(output_filename, index=False)
@@ -89,7 +91,7 @@ if 'SLURM_ARRAY_TASK_ID' in os.environ:
 else:
     # Combine results for all folds into one CSV file
     results_df = pd.DataFrame([
-        {'site_left_out': site, 'mse': info['mse'], 'rmse': info['rmse'], 'r2': info['r2']}
+        {'site_left_out': site, 'mse': info['mse'], 'rmse': info['rmse'], 'r2': info['r2'], 'relative_error': info['relative_error'], 'mae': info['mae']}
         for site, info in results.items()
     ])
     results_df = results_df.sort_values(by='site_left_out')
