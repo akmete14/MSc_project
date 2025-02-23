@@ -73,23 +73,24 @@ for site in sites_to_process:
     mse = mean_squared_error(y_test_scaled, y_pred_scaled)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test_scaled, y_pred_scaled)
+    relative_error = np.mean(np.abs(y_test_scaled - y_pred_scaled) / np.abs(y_test_scaled))
+    mae = np.mean(np.abs(y_test_scaled - y_pred_scaled))
 
 
     # Store the model and performance metric for the site
-    results[site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2_score': r2}
-    
-    print(f"Site {site}: MSE = {mse:.4f}")
+    results[site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2_score': r2, 'relative_error': relative_error, 'mae': mae}    
+    print(f"Site {site}: MSE = {mse:.6f}")
 
 # Save the results to CSV.
 # If running as a SLURM array (one site per job), save with site identifier in filename.
 if 'SLURM_ARRAY_TASK_ID' in os.environ:
     output_filename = f"results_site_{sites_to_process[0]}.csv"
-    results_df = pd.DataFrame([{'site': site, 'mse': result['mse'], 'rmse': result['rmse'], 'r2_score': result['r2_score']} for site, result in results.items()])
+    results_df = pd.DataFrame([{'site': site, 'mse': result['mse'], 'rmse': result['rmse'], 'r2_score': result['r2_score'], 'relative_error': result['relative_error'], 'mae': result['mae']} for site, result in results.items()])
     results_df.to_csv(output_filename, index=False)
     print(f"Results saved to {output_filename}")
 else:
     # If processing all sites sequentially, combine all into one CSV.
-    results_df = pd.DataFrame([{'site': site, 'mse': result['mse'], 'rmse': result['rmse'], 'r2_score': result['r2_score']} for site, result in results.items()])
+    results_df = pd.DataFrame([{'site': site, 'mse': result['mse'], 'rmse': result['rmse'], 'r2_score': result['r2_score'], 'relative_error': result['relative_error'], 'mae': result['mae']} for site, result in results.items()])
     results_df = results_df.sort_values(by='site')
     results_df.to_csv("site_results.csv", index=False)
     print("All site results saved to site_results.csv")
