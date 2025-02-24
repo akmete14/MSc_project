@@ -1,0 +1,46 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+
+The following have been reloaded with a version change:
+  1) stack/.2024-04-silent => stack/2024-04
+
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+Traceback (most recent call last):
+  File "/cluster/project/math/akmete/MSc/XGBvsLSTM_OnSite/comparison_random.py", line 41, in <module>
+    plt.savefig(f"{output_dir}{metric}_comparison_barplot_random_20_sites.png", dpi=300)
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/matplotlib/pyplot.py", line 1228, in savefig
+    res = fig.savefig(*args, **kwargs)  # type: ignore[func-returns-value]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/matplotlib/figure.py", line 3395, in savefig
+    self.canvas.print_figure(fname, **kwargs)
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/matplotlib/backend_bases.py", line 2204, in print_figure
+    result = print_method(
+             ^^^^^^^^^^^^^
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/matplotlib/backend_bases.py", line 2054, in <lambda>
+    print_method = functools.wraps(meth)(lambda *args, **kwargs: meth(
+                                                                 ^^^^^
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/matplotlib/backends/backend_agg.py", line 496, in print_png
+    self._print_pil(filename_or_obj, "png", pil_kwargs, metadata)
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/matplotlib/backends/backend_agg.py", line 445, in _print_pil
+    mpl.image.imsave(
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/matplotlib/image.py", line 1676, in imsave
+    image.save(fname, **pil_kwargs)
+  File "/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/PIL/Image.py", line 2600, in save
+    fp = builtins.open(filename, "w+b")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/cluster/project/math/akmete/MSc/XGBvsLSTM_OnSite/plots_base/mse_comparison_barplot_random_20_sites.png'

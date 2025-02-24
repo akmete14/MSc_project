@@ -1,0 +1,55 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+
+The following have been reloaded with a version change:
+  1) stack/.2024-04-silent => stack/2024-04
+
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+  0%|          | 0/25 [00:00<?, ?it/s] 24%|██▍       | 6/25 [00:00<00:00, 52.85it/s] 48%|████▊     | 12/25 [00:00<00:00, 54.69it/s] 72%|███████▏  | 18/25 [00:00<00:00, 54.85it/s] 96%|█████████▌| 24/25 [00:00<00:00, 55.18it/s]100%|██████████| 25/25 [00:00<00:00, 53.98it/s]
+Index(['GPP', 'Tair', 'vpd', 'SWdown', 'LWdown', 'SWdown_clearsky',
+       'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv', 'NDWI_band7', 'LAI',
+       'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
+       'IGBP_veg_short_b'GRA'', 'IGBP_veg_short_b'ENF'',
+       'IGBP_veg_short_b'SAV'', 'IGBP_veg_short_b'EBF'',
+       'IGBP_veg_short_b'WSA'', 'IGBP_veg_short_b'DBF'',
+       'IGBP_veg_short_b'OSH'', 'IGBP_veg_short_b'CRO'',
+       'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
+       'IGBP_veg_short_b'CVM'', 'cluster'],
+      dtype='object')
+0it [00:00, ?it/s]1it [34:53, 2093.28s/it]2it [1:10:03, 2103.00s/it]3it [1:42:43, 2037.91s/it]4it [2:16:53, 2042.62s/it]5it [2:49:51, 2019.51s/it]6it [3:23:33, 2020.27s/it]7it [3:55:35, 1988.07s/it]8it [4:29:44, 2007.54s/it]9it [5:02:02, 1985.78s/it]10it [5:35:13, 1987.40s/it]10it [5:35:13, 2011.36s/it]
+[10:02:42] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[10:37:37] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[11:12:46] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[11:45:29] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[12:19:39] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[12:52:39] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[13:26:16] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[13:58:17] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[14:32:32] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[15:04:45] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+   group_left_out       mse        R2  Relative Error       MAE      RMSE
+0               1  0.000221  0.799359        0.014056  0.007659  0.014866
+1               2  0.000354  0.731317        0.016701  0.009256  0.018825
+2               3  0.000367  0.714573        0.017106  0.009453  0.019163
+3               4  0.000283  0.769404        0.016479  0.008996  0.016833
+4               5  0.000611  0.629549        0.027138  0.012488  0.024728
+5               6  0.000328  0.709821        0.018052  0.009783  0.018107
+6               7  0.000353  0.745898        0.017701  0.009777  0.018789
+7               8  0.000241  0.750805        0.015253  0.008220  0.015521
+8               9  0.000239  0.747926        0.014506  0.007900  0.015456
+9              10  0.000171  0.814620        0.013043  0.006984  0.013063
