@@ -1,34 +1,0 @@
-Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
-
-The following have been reloaded with a version change:
-  1) stack/.2024-04-silent => stack/2024-04
-
-
-----------------------------------------------------------------------------
-  gcc: gcc/8.5.0
-----------------------------------------------------------------------------
-
-    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
-
-      stack/.2024-04-silent
-      stack/2024-04
- 
-    Help:
-      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
-      Fortran, Ada, and Go, as well as libraries for these languages.
-
-
- 
-
-  0%|          | 0/25 [00:00<?, ?it/s] 20%|██        | 5/25 [00:00<00:00, 45.62it/s] 44%|████▍     | 11/25 [00:00<00:00, 49.53it/s] 64%|██████▍   | 16/25 [00:00<00:00, 48.32it/s] 88%|████████▊ | 22/25 [00:00<00:00, 49.07it/s]100%|██████████| 25/25 [00:00<00:00, 47.89it/s]
-Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
-       'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv',
-       'NDWI_band7', 'LAI', 'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
-       'cluster', 'IGBP_veg_short_b'GRA'', 'IGBP_veg_short_b'ENF'',
-       'IGBP_veg_short_b'SAV'', 'IGBP_veg_short_b'EBF'',
-       'IGBP_veg_short_b'WSA'', 'IGBP_veg_short_b'DBF'',
-       'IGBP_veg_short_b'OSH'', 'IGBP_veg_short_b'CRO'',
-       'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
-       'IGBP_veg_short_b'CVM''],
-      dtype='object')
-0it [00:00, ?it/s]1it [32:50, 1970.78s/it]slurmstepd: error: *** JOB 21633088 ON eu-fn-3t-01 CANCELLED AT 2025-01-22T21:44:29 ***

@@ -1,55 +1,0 @@
-Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
-
-The following have been reloaded with a version change:
-  1) stack/.2024-04-silent => stack/2024-04
-
-
-----------------------------------------------------------------------------
-  gcc: gcc/8.5.0
-----------------------------------------------------------------------------
-
-    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
-
-      stack/.2024-04-silent
-      stack/2024-04
- 
-    Help:
-      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
-      Fortran, Ada, and Go, as well as libraries for these languages.
-
-
- 
-
-  0%|          | 0/25 [00:00<?, ?it/s] 12%|█▏        | 3/25 [00:00<00:00, 28.85it/s] 24%|██▍       | 6/25 [00:00<00:00, 29.50it/s] 36%|███▌      | 9/25 [00:00<00:00, 29.59it/s] 48%|████▊     | 12/25 [00:00<00:00, 29.58it/s] 64%|██████▍   | 16/25 [00:00<00:00, 30.02it/s] 80%|████████  | 20/25 [00:00<00:00, 30.06it/s] 96%|█████████▌| 24/25 [00:00<00:00, 30.01it/s]100%|██████████| 25/25 [00:00<00:00, 29.34it/s]
-Index(['Unnamed: 0', 'GPP', 'Tair', 'vpd', 'SWdown', 'LWdown',
-       'SWdown_clearsky', 'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv',
-       'NDWI_band7', 'LAI', 'fPAR', 'hour', 'IGBP_veg_short_b'MF'', 'site_id',
-       'cluster', 'IGBP_veg_short_b'GRA'', 'IGBP_veg_short_b'ENF'',
-       'IGBP_veg_short_b'SAV'', 'IGBP_veg_short_b'EBF'',
-       'IGBP_veg_short_b'WSA'', 'IGBP_veg_short_b'DBF'',
-       'IGBP_veg_short_b'OSH'', 'IGBP_veg_short_b'CRO'',
-       'IGBP_veg_short_b'CSH'', 'IGBP_veg_short_b'WET'',
-       'IGBP_veg_short_b'CVM''],
-      dtype='object')
-0it [00:00, ?it/s]1it [37:16, 2236.66s/it]2it [1:19:39, 2416.97s/it]3it [2:01:20, 2455.16s/it]4it [2:44:05, 2498.73s/it]5it [3:24:20, 2468.30s/it]6it [3:59:00, 2336.31s/it]7it [4:34:34, 2270.20s/it]8it [5:11:24, 2251.16s/it]9it [5:50:30, 2280.82s/it]10it [6:27:17, 2257.85s/it]10it [6:27:17, 2323.74s/it]
-[18:19:47] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-[18:57:01] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-[19:39:25] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-[20:21:05] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-[21:03:50] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-[21:44:03] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-[22:18:44] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-[22:54:18] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-[23:31:09] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-[00:10:14] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
-   group_left_out       mse
-0               0  0.000279
-1               1  0.000382
-2               2  0.000233
-3               3  0.000333
-4               4  0.000180
-5               5  0.000485
-6               6  0.000348
-7               7  0.000068
-8               8  0.000466
-9               9  0.000299
