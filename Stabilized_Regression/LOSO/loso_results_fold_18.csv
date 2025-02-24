@@ -1,0 +1,2 @@
+test_site,ensemble_mse_original,ensemble_mse_scaled,full_mse_scaled,G_hat_count,O_hat_count,min_stab_score,max_stab_score,min_pred_score,max_pred_score
+AU-Wac,8.203362609275936e-15,0.0014110962492977215,0.0014117301,32,8,9.587309e-08,6.8895315e-07,-0.0010891793,-0.00032077002
