@@ -1,10 +1,10 @@
 # Distribution Generalization in Dynamical Real-World Systems
 This git implements some pooling and domain generalization methods, applied to the FLUXNET data. The methods implemented are the following
-1. Linear Regression
-2. Extreme Gradient Boosting (XGBoost)
-3. Long Short-Term Memory (LSTM)
-4. Invariant Risk Minimization (IRM)
-5. Stabilized Regression (SR)
+1. Linear Regression,
+2. Extreme Gradient Boosting (XGBoost),
+3. Long Short-Term Memory (LSTM),
+4. Invariant Risk Minimization (IRM),
+5. Stabilized Regression (SR).
 
 To reproduce the experiments, ensure you have access to the FLUXNET data. Then, clone this repository into your preffered code editor and simply execute the jobs.
 
