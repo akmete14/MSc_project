@@ -191,14 +191,25 @@ def run_fold(fold_index):
     y_pred_scaled = x_test @ irm_model.solution()
     test_mse = ((y_pred_scaled - y_test) ** 2).mean().item()
     test_rmse = np.sqrt(test_mse)
-    
+    # Calculate r2, relative error and mae    
+    ss_res = ((y_test - y_pred_scaled) ** 2).sum()
+    ss_tot = ((y_test - y_test.mean()) ** 2).sum()
+    r2 = (1 - ss_res / ss_tot).item()
+    # Mean Absolute Error (MAE)
+    mae = torch.abs(y_test - y_pred_scaled).mean().item()
+    # Relative error: average of abs((y_pred - y_true)/y_true)
+    relative_error = (torch.abs(y_test - y_pred_scaled) / torch.abs(y_test)).mean().item()
+
     print(f"Fold {fold_index}: Site {site_ids[fold_index]} - Test MSE: {test_mse:.6f}, Test RMSE: {test_rmse:.6f}")
     
     # Save results to a CSV file. Each job writes its own CSV file.
     results_df = pd.DataFrame([{
         'site_id': site_ids[fold_index],
         'mse': test_mse,
-        'rmse': test_rmse
+        'rmse': test_rmse,
+        'r2': r2,
+        'relative_error': relative_error,
+        'mae': mae
     }])
     
     # Create an output directory if it doesn't exist

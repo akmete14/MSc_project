@@ -12,4 +12,4 @@
 module load stack/2024-06 python_cuda/3.11.6
 
 # Run the Python script, passing the SLURM_ARRAY_TASK_ID as the fold index
-python /cluster/project/math/akmete/MSc/IRM/LOSO/loeo_parallel_global_scaling.py ${SLURM_ARRAY_TASK_ID}
+python /cluster/project/math/akmete/MSc/IRM/LOSO/results_global_scaling/loeo_parallel_global_scaling.py ${SLURM_ARRAY_TASK_ID}

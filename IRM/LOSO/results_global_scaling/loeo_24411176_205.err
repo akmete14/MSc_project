@@ -1,0 +1,4 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+Casting columns:   0%|          | 0/13 [00:00<?, ?it/s]Casting columns:  23%|██▎       | 3/13 [00:00<00:00, 21.51it/s]Casting columns:  46%|████▌     | 6/13 [00:00<00:00, 21.64it/s]Casting columns:  69%|██████▉   | 9/13 [00:00<00:00, 19.78it/s]Casting columns:  85%|████████▍ | 11/13 [00:00<00:00, 18.08it/s]Casting columns: 100%|██████████| 13/13 [00:00<00:00, 14.19it/s]Casting columns: 100%|██████████| 13/13 [00:00<00:00, 16.49it/s]
+/cluster/software/stacks/2024-06/spack/opt/spack/linux-ubuntu22.04-x86_64_v3/gcc-12.2.0/python-3.11.6-ukhwpjnwzzzizek3pgr75zkbhxros5fq/lib/python3.11/site-packages/torch/cuda/__init__.py:619: UserWarning: Can't initialize NVML
+  warnings.warn("Can't initialize NVML")
