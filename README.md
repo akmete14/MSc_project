@@ -6,7 +6,7 @@ This git implements some pooling and domain generalization methods, applied to t
 4. Invariant Risk Minimization (IRM),
 5. Stabilized Regression (SR).
 
-To reproduce the experiments, ensure you have access to the FLUXNET data. Then, clone this repository into your preffered code editor and simply execute the jobs.
+To reproduce the experiments, ensure you have access to the FLUXNET data. Then, clone this repository into your preffered code editor and, in the main directory, create a folder called "Data". Then, upload the data into this folder. Due to the large amount of data, you need to make sure that the "Data" folder is listed in .gitignore. This ensures that you don't upload large amount of data into the git when pushing it.
 
 ## Structure of the git
 This git implements the above listed methods. It assumes that data is uploaded into the main directory in a folder called "Data". For every method, there is corresponding folder in the main directoy. It contains the three different Set-Ups **In-Site**, **LOSO** and **LOGO**. Every Set-Up contains the **python** file for the implementation, a **shell** file for scheduling the jobs and a **csv**  file with the results. Observe that mostly, the code was run in parallel so save time. Therefore, there is sometimes a python file **merge** included, merging all CSVs to one total csv.
