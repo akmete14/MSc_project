@@ -16,7 +16,7 @@ After cloning the git and uploading the data, I give you now a short guide on ho
 
 ### Setting up a virtual environment
 A list of the dependencies needed in this environment can be found in the **requirements.txt** file. Use this file to create the virtual environment.
-After creating the virtual environment, we are set to schedule the jobs.
+After creating the virtual environment, we are set to reproduce the experiments.
 
 As an example to show how to schedule jobs, we will schedule the job for the In-Site experiment of the Linear Regression method.
 ### Scheduling a job
