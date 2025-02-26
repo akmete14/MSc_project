@@ -64,7 +64,7 @@ Below is an example of a shell script that demonstrates a simple job submission 
 
 # Load modules and activate venv
 module load python/3.8
-source ~/myenv/bin/activate
+source ~/venv/bin/activate
 
 # Run your command here
 python path/to/your/script.py
