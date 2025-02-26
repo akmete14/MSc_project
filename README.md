@@ -30,15 +30,14 @@ Assume you already uploaded the data and created a virtual environment.
 
 ### Preprocessing data
 The implementation of the preprocessing can be found in **../preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in the thesis in Chapter 2.  If you are interested in predicting also other fluxes than the GPP you can adjust the python file accordingly. If, for example, you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
-TEST:
 
-Below is a snippet from `../preprocessing/preprocessing.py`:
+Below is a snippet from `../preprocessing/preprocessing.py` but including the NEE:
 
 ```python
 def initialize_dataframe(file1, file2, file3, path):
     # Open data
     ds = xr.open_dataset(path + file1, engine='netcdf4')
-    ds = ds[['GPP','GPP_qc','longitude','latitude']]
+    ds = ds[['GPP','GPP_qc','NEE', 'NEE_qc','longitude','latitude']]
     dr = xr.open_dataset(path + file2, engine='netcdf4')
     dr = dr[['Tair','Tair_qc','vpd','vpd_qc','SWdown','SWdown_qc','LWdown','LWdown_qc','SWdown_clearsky','IGBP_veg_short']]
     dt = xr.open_dataset(path + file3, engine='netcdf4')
