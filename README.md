@@ -129,7 +129,7 @@ mae = np.mean(np.abs(y_test_scaled - y_pred_scaled))
 results[site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2_score': r2, 'relative_error': relative_error, 'mae': mae}    
 print(f"Site {site}: MSE = {mse:.6f}")
 ```
-The LinearRegressor() can in principle be replaced by any regressor from sklearn. If you implement a method based on pytorch, I recommend considering the pipelines of the IRM implementations. If you are considering to implement a tensforflow based method, then follow the pipeline for the LSTM.
+The LinearRegressor() can in principle be replaced by any regressor from sklearn. If you implement a method based on pytorch, I recommend considering the pipelines of the IRM implementations. If you are considering to implement a tensorflow based method, then follow the pipeline for the LSTM.
 For pytorch based implementations, you can follow the In-Site code for the IRM and for tensorflow based implementations chek the LSTM implementation. Given the pyhton file, you can run it using a shell file for scheduling.
 ### Shell file
 The shell files are important when you work on clusters which require scheduling jobs. In a shell file, you first specify some parameters like time and memory you need for running the job. Moreover, you specify the modules you need to load so that the packages you import in the python scripts are loaded appropriately. Next to the modules, you also activate the virtual environment which you created. In the end of the shell file, you express the command which you want to be executed, for example **python path/to/your/script.py**. A shell file can look like this
