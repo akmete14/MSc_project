@@ -30,6 +30,20 @@ Assume you already uploaded the data and created a virtual environment.
 
 ### Preprocessing data
 The implementation of the preprocessing can be found in **../preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in the thesis in Chapter 2.  If you are interested in predicting also other fluxes than the GPP you can adjust the python file accordingly. If, for example, you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
+TEST:
+
+Below is a snippet from `../preprocessing/preprocessing.py`:
+
+```python
+def initialize_dataframe(file1, file2, file3, path):
+    # Open data
+    ds = xr.open_dataset(path + file1, engine='netcdf4')
+    ds = ds[['GPP','GPP_qc','longitude','latitude']]
+    dr = xr.open_dataset(path + file2, engine='netcdf4')
+    dr = dr[['Tair','Tair_qc','vpd','vpd_qc','SWdown','SWdown_qc','LWdown','LWdown_qc','SWdown_clearsky','IGBP_veg_short']]
+    dt = xr.open_dataset(path + file3, engine='netcdf4')
+    dt = dt[['LST_TERRA_Day','LST_TERRA_Night','EVI','NIRv','NDWI_band7','LAI','fPAR']]
+```
 
 ### Shell file
 The shell files are important when you work on clusters which require scheduling jobs. In a shell file, you first specify the time and memory you need for running the job. Moreover, you specify the modules you need to load so that the packages you use in the python scripts are loaded appropriately. Next to the modules, you will also activate the virtual environment which you created. In the end of the shell file, you express the command which you want to be executed, for example **python path/to/your/script.py**. A shell file can look like this
@@ -56,19 +70,3 @@ source ~/myenv/bin/activate
 # Run your command here
 python path/to/your/script.py
 ```
-TEST:
-## Example Python Script
-
-Below is a snippet from `my_script.py`:
-
-```python
-import time
-
-def main():
-    print("Job started...")
-    time.sleep(5)
-    print("Job completed.")
-
-if __name__ == "__main__":
-    main()
-
