@@ -12,13 +12,13 @@ To reproduce the experiments, ensure you have access to the FLUXNET data. Then, 
 This git implements the above listed methods. It assumes that data is uploaded into the main directory in a folder called "Data". For every method, there is a corresponding folder in the main directoy. It contains the three different Set-Ups **In-Site**, **LOSO** and **LOGO**. Every Set-Up contains the **python** file for the implementation of the method in the corresponding setting, a **shell** file for scheduling the jobs and a **csv**  file with the results. The use of the shell files is for scheduling the jobs as it is needed when working with Euler. However, if you are not working with a system requiring scheduling, I still recommend to look into the shell file to see how many ressources are necessary so that the job works. The ressources requested in the shell file are not optimal, in the sense that the code might also work with less ressources. However, requesting the same ressources will surely execute the job successfully.
 
 ## Guide on how to reproduce the experiments
-After cloning the git and uploading the data, I give you now a short guide on how to reproduce the experiments. The first thing you have to do is creating a virtual environment.
+After cloning the git and uploading the data, I give you now a short guide on how to reproduce the experiments. The cleanest way to be able to run the experiments is by creating a virtual environment.
 
 ### Setting up a virtual environment
-The cleanest way to be able to run the experiments is to use a virtual environment. A list of the dependencies needed in this environment for running the experiments can be found in the **requirements.txt** file. Use this file to create the virtual environment.
-
+A list of the dependencies needed in this environment can be found in the **requirements.txt** file. Use this file to create the virtual environment.
 After creating the virtual environment, we are set to schedule the jobs.
 
+As an example to show how to schedule jobs, we will schedule the job for the In-Site experiment of the Linear Regression method.
 ### Scheduling a job
 The first step in order to run the experiment is to change into the corresponding directory by typing "cd LR/In_Site/" into the terminal. After you changed the directory, you can submit the job by entering "sbatch script.sh" in the terminal. This will batch the shell file **script.sh**. Now, the job is already scheduled and depending on your priority in the queue you have to wait some time until the job is running. To check whether the job is already being executed or still queueing you can type "squeue -u <username>" into the terminal. If there are some intermediate prints within the python code, you can check them in the log-files which are being created for every job submitted.
 
