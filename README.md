@@ -88,8 +88,7 @@ n_train = int(len(group) * 0.8)
 train = group.iloc[:n_train]
 test  = group.iloc[n_train:]
 ```
-Next, we define train and test of the features and the target and scale everything
-the data and finally train the model and do the predictions. Moreover, save the metrics you are interested in
+Next, we define train and test of the features and the target variable and scale everything
 ```python
 # Extract features and target variables
 X_train = train[feature_columns]
@@ -97,37 +96,39 @@ y_train = train[target_column]
 X_test  = test[feature_columns]
 y_test  = test[target_column]
     
-    # Scale features using MinMaxScaler
-    scaler_X = MinMaxScaler()
-    X_train_scaled = scaler_X.fit_transform(X_train)
-    X_test_scaled  = scaler_X.transform(X_test)
+# Scale features using MinMaxScaler
+scaler_X = MinMaxScaler()
+X_train_scaled = scaler_X.fit_transform(X_train)
+X_test_scaled  = scaler_X.transform(X_test)
     
-    # Scale target variable based on training data values
-    y_train_min = y_train.min()
-    y_train_max = y_train.max()
-    if y_train_max - y_train_min == 0:
-        y_train_scaled = y_train.values
-        y_test_scaled = y_test.values
-    else:
-        y_train_scaled = (y_train - y_train_min) / (y_train_max - y_train_min)
-        y_test_scaled  = (y_test - y_train_min) / (y_train_max - y_train_min)
-    
-    # Train a linear regression model on the scaled training data
-    model = LinearRegression()
-    model.fit(X_train_scaled, y_train_scaled)
-    
-    # Evaluate the model on the scaled test data
-    y_pred_scaled = model.predict(X_test_scaled)
-    mse = mean_squared_error(y_test_scaled, y_pred_scaled)
-    rmse = np.sqrt(mse)
-    r2 = r2_score(y_test_scaled, y_pred_scaled)
-    relative_error = np.mean(np.abs(y_test_scaled - y_pred_scaled) / np.abs(y_test_scaled))
-    mae = np.mean(np.abs(y_test_scaled - y_pred_scaled))
+# Scale target variable based on training data values
+y_train_min = y_train.min()
+y_train_max = y_train.max()
+if y_train_max - y_train_min == 0:
+    y_train_scaled = y_train.values
+    y_test_scaled = y_test.values
+else:
+    y_train_scaled = (y_train - y_train_min) / (y_train_max - y_train_min)
+    y_test_scaled  = (y_test - y_train_min) / (y_train_max - y_train_min)
 
+````
+Finally, we define the regressor, fit the model and evaluate using different metrics
+```python
+# Train a linear regression model on the scaled training data
+model = LinearRegression()
+model.fit(X_train_scaled, y_train_scaled)
+    
+# Evaluate the model on the scaled test data
+y_pred_scaled = model.predict(X_test_scaled)
+mse = mean_squared_error(y_test_scaled, y_pred_scaled)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test_scaled, y_pred_scaled)
+relative_error = np.mean(np.abs(y_test_scaled - y_pred_scaled) / np.abs(y_test_scaled))
+mae = np.mean(np.abs(y_test_scaled - y_pred_scaled))
 
-    # Store the model and performance metric for the site
-    results[site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2_score': r2, 'relative_error': relative_error, 'mae': mae}    
-    print(f"Site {site}: MSE = {mse:.6f}")
+# Store the model and performance metric for the site
+results[site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2_score': r2, 'relative_error': relative_error, 'mae': mae}    
+print(f"Site {site}: MSE = {mse:.6f}")
 ```
 The LinearRegressor() can in principle be replaced by any regressor from sklearn. For pytorch based implementations, you can follow the In-Site code for the IRM and for tensorflow based implementations have a chek at the LSTM implementation. Given the pyhton file, you can run it using a shell file for scheduling. This already concludes how you can run the In-Site experiment with the method of your choice.
 ### Shell file
