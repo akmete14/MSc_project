@@ -56,7 +56,7 @@ def initialize_dataframe(file1, file2, file3, path):
 ```
 After choosing the preprocessing of the data, you can start setting up the In-Site experiment.
 ### Reading the data and defining features & target variable
-Let's look at The following code can generally be used for methods implemented with sklearn. First, read in the data which we preprocessed and define the feature set and target variable:
+Let's look at **../LR/In_Site/insite.py** as an example on how to use a regression method from sklearn for the In-Site extrapolation task. First, read in the data which we preprocessed and define the feature set and target variable:
 ```python
 # Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
