@@ -29,5 +29,4 @@ Now, you know how to reproduce the experiments. Next, I want to explain how you 
 Assume you already uploaded the data and created a virtual environment.
 
 ### Preprocessing data
-The implementation of the preprocessing can be found in **../preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in the thesis in Chapter 2.  If you are interested in predicting also other fluxes than the GPP you can adjust the python file accordingly. If, for example, you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later for filtering for good quality data.
-
+The implementation of the preprocessing can be found in **../preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in the thesis in Chapter 2.  If you are interested in predicting also other fluxes than the GPP you can adjust the python file accordingly. If, for example, you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
