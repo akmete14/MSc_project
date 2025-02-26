@@ -33,14 +33,11 @@ in the terminal. This will batch the shell file **script.sh**. If the job was su
 $ sbatch script.sh
 Submitted batch job 1234567
 ```
-
-
-
 The job is now scheduled and depending on your priority in the queue you have to wait some time until the job is being executed. To check the status of the job, type in 
 ```sh
 $ squeue -u<username>
 ```
-in the terminal (replace <username> with your username). If there are some intermediate prints within the python code, you can check them in the log-files which are being created as soon as the job is being executed. Now, you know how to reproduce all experiments which are already implemented. Next, I explain how you can run your own experiments on the FLUXNET data.
+in the terminal (replace <username> with your username). If there are some intermediate prints within the python code, you can check them in the log-files which are being created as soon as the job is being executed. Now, you know how to reproduce all experiments which are already implemented. Next, I explain how you can run your own experiments on the FLUXNET data. I will show it at the example of the In-Site experimental setting.
 
 ## Running your own methods
 Assume you already uploaded the data and created a virtual environment. The first step is to consider the preprocessing of the data.
@@ -60,7 +57,6 @@ def initialize_dataframe(file1, file2, file3, path):
     dt = xr.open_dataset(path + file3, engine='netcdf4')
     dt = dt[['LST_TERRA_Day','LST_TERRA_Night','EVI','NIRv','NDWI_band7','LAI','fPAR']]
 ```
-
 Given the desired preprocessed data, you can start setting up the In-Site experiment. Doing so depends highly on the implementation of the method. Generally, the structure is as follows
 ### Reading the data and defining features and target variable
 First, read in the data which we preprocessed and define the feature set and target variable:
