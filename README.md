@@ -25,7 +25,7 @@ The first step in order to run the experiment is to change into the correspondin
 
 Now, you know how to reproduce the experiments. Next, I want to explain how you run your own experiments on the FLUXNET data.
 
-## Running your own methods
+## Running your own methods - shown at In-Site experiment
 Assume you already uploaded the data and created a virtual environment.
 
 ### Preprocessing data
