@@ -138,3 +138,4 @@ source ~/venv/bin/activate
 # Run your command here
 python path/to/your/script.py
 ```
+To create a shell file, just type "vim script.sh" and then "i" to be able to modify the shell script. When the shell file is complete, click "Escape", then enter ":wq" and click "Enter". When the shell file was created for the first time, you need to make it executable by entering "chmod +x script.sh" in the terminal. Now, the job can be submitted by entering "sbatch script.sh" into the terminal.
