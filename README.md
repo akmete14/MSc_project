@@ -40,9 +40,9 @@ in the terminal (replace <username> with your username). If there are some inter
 ## Run your own methods
 ### Preprocessing data
 After having uploaded the data and created the virtual environment, the first step for running your own method is to consider the preprocessing of the data.
-The implementation of the preprocessing can be found in `..preprocessing/preprocessing.py`. The file reads in the data and exectues the preprocessing steps as discussed in Chapter 2. If you are interested in predicting also other fluxes next to the GPP, you can adjust the python file accordingly. For example if you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
+The implementation of the preprocessing can be found in `.preprocessing/preprocessing.py`. The file reads in the data and exectues the preprocessing steps as discussed in Chapter 2. If you are interested in predicting also other fluxes next to the GPP, you can adjust the python file accordingly. For example if you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
 
-Below is a example snippet from `../preprocessing/preprocessing.py`, that includes the NEE:
+Below is a example snippet from `./preprocessing/preprocessing.py`, that includes the NEE:
 
 ```python
 def initialize_dataframe(file1, file2, file3, path):
@@ -56,7 +56,7 @@ def initialize_dataframe(file1, file2, file3, path):
 ```
 After choosing the preprocessing of the data, you can start setting up the In-Site experiment.
 ### Reading the data and defining features & target variable
-Let's look at `../LR/In_Site/insite.py` as an example on how to use a regression method from sklearn for the In-Site extrapolation task. First, read in the data which we preprocessed and define the feature set and target variable:
+Let's look at `./LR/In_Site/insite.py` as an example on how to use a regression method from sklearn for the In-Site extrapolation task. First, read in the data which we preprocessed and define the feature set and target variable:
 ```python
 # Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
