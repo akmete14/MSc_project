@@ -118,7 +118,7 @@ for site in sites_to_process:
 ```
 The LinearRegressor() can in principle be replaced by any regressor from sklearn. For pytorch based implementations, you can follow the In-Site code for the IRM and for tensorflow based implementations have a chek at the LSTM implementation. Given the pyhton file, you can run it using a shell file for scheduling. This already concludes how you can run the In-Site experiment with the method of your choice.
 ### Shell file
-The shell files are important when you work on clusters which require scheduling jobs. In a shell file, you first specify the time and memory you need for running the job. Moreover, you specify the modules you need to load so that the packages you use in the python scripts are loaded appropriately. Next to the modules, you will also activate the virtual environment which you created. In the end of the shell file, you express the command which you want to be executed, for example **python path/to/your/script.py**. A shell file can look like this
+The shell files are important when you work on clusters which require scheduling jobs. In a shell file, you first specify some parameters like the time and memory you need for running the job. Moreover, you specify the modules you need to load so that the packages you use in the python scripts are loaded appropriately. Next to the modules, you will also activate the virtual environment which you created. In the end of the shell file, you express the command which you want to be executed, for example **python path/to/your/script.py**. A shell file can look like this
 ```sh
 #!/bin/bash
 # Sample shell script for SLURM job submission
