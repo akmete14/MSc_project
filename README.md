@@ -130,9 +130,9 @@ mae = np.mean(np.abs(y_test_scaled - y_pred_scaled))
 results[site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2_score': r2, 'relative_error': relative_error, 'mae': mae}    
 print(f"Site {site}: MSE = {mse:.6f}")
 ```
-The LinearRegressor() can in principle be replaced by any regressor from sklearn. For pytorch based implementations, you can follow the In-Site code for the IRM and for tensorflow based implementations have a chek at the LSTM implementation. Given the pyhton file, you can run it using a shell file for scheduling. This already concludes how you can run the In-Site experiment with the method of your choice.
+The LinearRegressor() can in principle be replaced by any regressor from sklearn. For pytorch based implementations, you can follow the In-Site code for the IRM and for tensorflow based implementations chek the LSTM implementation. Given the pyhton file, you can run it using a shell file for scheduling.
 ### Shell file
-The shell files are important when you work on clusters which require scheduling jobs. In a shell file, you first specify some parameters like the time and memory you need for running the job. Moreover, you specify the modules you need to load so that the packages you use in the python scripts are loaded appropriately. Next to the modules, you will also activate the virtual environment which you created. In the end of the shell file, you express the command which you want to be executed, for example **python path/to/your/script.py**. A shell file can look like this
+The shell files are important when you work on clusters which require scheduling jobs. In a shell file, you first specify some parameters like time and memory you need for running the job. Moreover, you specify the modules you need to load so that the packages you import in the python scripts are loaded appropriately. Next to the modules, you also activate the virtual environment which you created. In the end of the shell file, you express the command which you want to be executed, for example **python path/to/your/script.py**. A shell file can look like this
 ```sh
 #!/bin/bash
 # Sample shell script for SLURM job submission
@@ -140,10 +140,10 @@ The shell files are important when you work on clusters which require scheduling
 #SBATCH --job-name=my_job         # Job name
 #SBATCH --output=output.log       # Standard output log
 #SBATCH --error=error.log         # Error log
-#SBATCH --time=01:00:00           # Time limit hh:mm:ss
+#SBATCH --time=01:00:00           # Time limit hh:mm:ss (max 120:00:00)
 #SBATCH --ntasks=1                # Number of tasks
 #SBATCH --cpus-per-task=4         # CPU cores per task
-#SBATCH --mem=8G                  # Memory per node
+#SBATCH --mem-per-cpu=1024                  # Memory per cpu
 
 # Load modules and activate venv
 module load python/3.8
@@ -152,4 +152,15 @@ source ~/venv/bin/activate
 # Run your command here
 python path/to/your/script.py
 ```
-To create a shell file, just type "vim script.sh" and then "i" to be able to modify the shell script. When the shell file is complete, click "Escape", then enter ":wq" and click "Enter". When the shell file was created for the first time, you need to make it executable by entering "chmod +x script.sh" in the terminal. Now, the job can be submitted by entering "sbatch script.sh" into the terminal.
+To create a shell file, just enter
+```sh
+$ vim script.sh
+```
+After writing the shell file, make it executable by typing
+```sh
+$ chmod +x script.sh
+```
+Now, the job can be submitted by entering
+```sh
+$ sbatch script.sh
+```
