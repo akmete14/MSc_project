@@ -216,7 +216,8 @@ results = {
     "full_relative_error": full_relative_error,
     "ensemble_mae": ensemble_mae,
     "full_mae": full_mae,
-    "O_hat_count": len(O_hat)
+    "O_hat_count": len(O_hat),
+    "O_hat": O_hat
 }
 
 results_df = pd.DataFrame([results])

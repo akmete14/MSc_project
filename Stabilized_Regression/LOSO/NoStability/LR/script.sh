@@ -3,7 +3,7 @@
 #SBATCH --job-name=loso_array
 #SBATCH --output=loso_array_%A_%a.out
 #SBATCH --error=loso_array_%A_%a.err
-#SBATCH --time=12:00:00
+#SBATCH --time=120:00:00
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=35840
 #SBATCH --array=0-289

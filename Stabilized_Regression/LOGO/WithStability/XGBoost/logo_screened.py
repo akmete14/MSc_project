@@ -48,7 +48,7 @@ df_test  = df[df['cluster'] == test_cluster].copy()
 
 # -----------------------------
 # FEATURE SCREENING USING XGBOOST
-# Compute feature importances on the training set and select the top 7 features.
+# Compute feature importances on the training set and select the top 5 features.
 # -----------------------------
 X_train_screen = df_train[initial_feature_columns]
 y_train_screen = df_train[target_column]
@@ -65,7 +65,7 @@ temp_model.fit(X_train_screen_scaled, y_train_screen)
 importance = temp_model.feature_importances_
 feature_importance = dict(zip(initial_feature_columns, importance))
 sorted_features = sorted(feature_importance, key=feature_importance.get, reverse=True)
-top_k = 7
+top_k = 5
 selected_features = sorted_features[:top_k]
 print("Selected features after screening (top 7):", selected_features)
 
@@ -208,7 +208,7 @@ def ensemble_predict(X, return_scaled=False):
     return ensemble_preds
 
 # -----------------------------
-# Train a full model using all screened features (i.e. the top 7 features) on the entire training set.
+# Train a full model using all screened features (i.e. the top 5 features) on the entire training set.
 # -----------------------------
 X_train_full = df_train[feature_columns]
 y_train_full = df_train[target_column]

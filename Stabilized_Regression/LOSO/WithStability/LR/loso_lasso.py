@@ -126,13 +126,16 @@ for subset in all_subsets:
 
 # --- Filtering subsets ---
 # First filter: select subsets with stability score below or equal to a threshold (5% quantile).
-stab_threshold = np.quantile(stability_scores_all, 0.05)
-G_hat = [subset for subset, stab in zip(all_subsets, stability_scores_all) if stab <= stab_threshold]
+alpha_pred = 0.05
+quantile_level = 0.1
+alpha_stab = np.quantile(stability_scores_all, quantile_level)
+G_hat = [subset for subset, stab in zip(all_subsets, stability_scores_all) if stab <= alpha_stab]
 print(f"G_hat count for test site {test_site}: {len(G_hat)}")
 
 # Second filter: among G_hat, keep only those whose prediction score is greater or equal to the 95th quantile.
-pred_threshold = np.quantile(pred_scores_all, 0.95)
-O_hat = [subset for subset in G_hat if scores_info[str(subset)]["pred_score"] >= pred_threshold]
+g_hat_pred_scores = [score for subset, score in zip(all_subsets, pred_scores_all) if subset in G_hat]
+c_pred = np.quantile(g_hat_pred_scores, 1-alpha_pred)
+O_hat = [subset for subset in G_hat if scores_info[str(subset)]["pred_score"] >= c_pred]
 print(f"O_hat count for test site {test_site}: {len(O_hat)}")
 
 # --- Train ensemble models for each subset in O_hat using the entire training data ---

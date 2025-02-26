@@ -39,7 +39,7 @@ df_train = df[df['cluster'] != test_cluster].copy()
 df_test  = df[df['cluster'] == test_cluster].copy()
 
 # ===== XGBOOST FEATURE SCREENING =====
-# Use XGBoost to compute feature importances and select the top 7 features.
+# Use XGBoost to compute feature importances and select the top 5 features.
 X_train_screen = df_train[initial_feature_columns]
 y_train_screen = df_train[target_column]
 scaler_screen = MinMaxScaler()
@@ -55,7 +55,7 @@ temp_model.fit(X_train_screen_scaled, y_train_screen)
 importance = temp_model.feature_importances_
 feature_importance = dict(zip(initial_feature_columns, importance))
 sorted_features = sorted(feature_importance, key=feature_importance.get, reverse=True)
-top_k = 7
+top_k = 5
 selected_features = sorted_features[:top_k]
 print("Selected features after XGBoost screening (top 7):", selected_features)
 

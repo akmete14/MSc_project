@@ -65,7 +65,7 @@ if __name__ == '__main__':
     for col in df.select_dtypes(include=['float64']).columns:
         df[col] = df[col].astype('float32')
     # Drop columns not needed (for LOSO, we don't need 'cluster').
-    df = df.drop(columns=['Unnamed: 0'])
+    df = df.drop(columns=['Unnamed: 0', 'cluster'])
     print("Loaded dataframe with columns:", df.columns)
     
     # Define initial feature columns and target.
@@ -126,7 +126,8 @@ if __name__ == '__main__':
     
     # === Filter subsets ===
     # Retain only those subsets whose prediction score is at or above the 95th quantile.
-    pred_threshold = np.quantile(pred_scores_all, 0.95)
+    alpha_pred = 0.05
+    pred_threshold = np.quantile(pred_scores_all, 1-alpha_pred)
     O_hat = [subset for subset in all_subsets if scores_info[str(subset)]["pred_score"] >= pred_threshold]
     print(f"O_hat count for test site {test_site}: {len(O_hat)}")
     
