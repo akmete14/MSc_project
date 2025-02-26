@@ -63,6 +63,9 @@ target_column = "GPP"
 
 # Initialize result dict
 results = {}
+
+# Define the sites to be processed (for sequential execution)
+sites_to_process = df['site_id'].unique()
 ```
 Next, we for every site do a chronological 80/20 train/test split, then scale the data and finally train the model and do the predictions. Moreover, save the metrics you are interested in
 ```python
