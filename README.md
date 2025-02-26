@@ -54,9 +54,9 @@ def initialize_dataframe(file1, file2, file3, path):
     dt = xr.open_dataset(path + file3, engine='netcdf4')
     dt = dt[['LST_TERRA_Day','LST_TERRA_Night','EVI','NIRv','NDWI_band7','LAI','fPAR']]
 ```
-After choosing the preprocessing of the data, you can start setting up the In-Site experiment. The following implementation is following the structure for a method implemented using sklearn
+After choosing the preprocessing of the data, you can start setting up the In-Site experiment.
 ### Reading the data and defining features & target variable
-First, read in the data which we preprocessed and define the feature set and target variable:
+The following code can generally be used for methods implemented with sklearn. First, read in the data which we preprocessed and define the feature set and target variable:
 ```python
 # Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
