@@ -22,13 +22,25 @@ As an example to show how to schedule jobs, we will schedule the job for the In-
 ### Scheduling a job
 The first step in order to run the experiment is to change into the corresponding directory, in our case by typing
 ```sh
-cd LR/In_Site/
+$ cd LR/In_Site/
 ```
 in the terminal. After changing the directory, you can submit the job by entering 
 ```sh
-sbatch script.sh
+$ sbatch script.sh
 ```
-in the terminal. This will batch the shell file **script.sh**. Now, the job is already scheduled and depending on your priority in the queue you have to wait some time until the job is running. To check whether the job is already being executed or still queueing you can type "squeue -u <username>" into the terminal (replace <username> with your username). If there are some intermediate prints within the python code, you can check them in the log-files which are being created as soon as the job is being executed.
+in the terminal. This will batch the shell file **script.sh**. If the job was successfully submitted, you should see an output like
+```sh
+$ sbatch script.sh
+Submitted batch job 1234567
+```
+
+
+
+Now, the job is already scheduled and depending on your priority in the queue you have to wait some time until the job is running. To check whether the job is already being executed or still queueing you can type 
+```sh
+squeue -u<username>
+```
+in the terminal (replace <username> with your username). If there are some intermediate prints within the python code, you can check them in the log-files which are being created as soon as the job is being executed.
 
 Now, you know how to reproduce the experiments. Next, I want to explain how you run your own experiments on the FLUXNET data.
 
