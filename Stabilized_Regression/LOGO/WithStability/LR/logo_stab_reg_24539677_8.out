@@ -1,0 +1,31 @@
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+Unique clusters: [2 5 0 9 8 6 7 4 1 3]
+Loaded dataframe with columns: Index(['GPP', 'Tair', 'vpd', 'SWdown', 'LWdown', 'SWdown_clearsky',
+       'IGBP_veg_short', 'LST_TERRA_Day', 'LST_TERRA_Night', 'EVI', 'NIRv',
+       'NDWI_band7', 'LAI', 'fPAR', 'hour', 'site_id', 'cluster'],
+      dtype='object')
+
+Processing fold (test cluster): 8
+For test cluster 8 selected features: ['vpd', 'SWdown', 'LWdown', 'SWdown_clearsky', 'LST_TERRA_Day', 'LAI', 'fPAR', 'hour']
+Number of subsets: 255
+For test cluster 8 G_hat count: 13
+For test cluster 8 O_hat count: 1
+Test Cluster 8 Ensemble MSE (scaled): 0.0007486922251415044
+Test Cluster 8 Full model MSE (scaled): 0.0007473881645891288
+Results saved to results_cluster_8.csv

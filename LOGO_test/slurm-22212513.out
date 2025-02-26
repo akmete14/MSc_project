@@ -1,0 +1,44 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+
+The following have been reloaded with a version change:
+  1) stack/.2024-04-silent => stack/2024-04
+
+
+----------------------------------------------------------------------------
+  gcc: gcc/8.5.0
+----------------------------------------------------------------------------
+
+    You will need to load all module(s) on any one of the lines below before the "gcc/8.5.0" module is available to load.
+
+      stack/.2024-04-silent
+      stack/2024-04
+ 
+    Help:
+      The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+      Fortran, Ada, and Go, as well as libraries for these languages.
+
+
+ 
+
+0it [00:00, ?it/s]1it [24:08, 1448.08s/it]2it [51:23, 1558.24s/it]3it [1:17:59, 1575.47s/it]4it [1:45:20, 1601.31s/it]5it [2:12:25, 1609.79s/it]6it [2:36:09, 1546.84s/it]7it [3:01:19, 1534.65s/it]8it [3:27:38, 1548.76s/it]9it [3:55:40, 1590.42s/it]10it [4:22:25, 1594.98s/it]10it [4:22:25, 1574.55s/it]
+[13:56:00] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[14:20:13] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[14:47:24] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[15:14:04] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[15:41:22] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[16:08:22] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[16:32:10] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[16:57:23] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[17:23:51] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+[17:51:55] WARNING: /workspace/src/learner.cc:686: Tree method is automatically selected to be 'approx' for faster speed. To use old behavior (exact greedy algorithm on single machine), set tree_method to 'exact'.
+   GroupLeftOut       MSE      RMSE        R2       MAE
+0             0  0.000356  0.018870  0.669713  0.009789
+1             1  0.000428  0.020677  0.595964  0.011179
+2             2  0.000281  0.016761  0.665792  0.009550
+3             3  0.000452  0.021249  0.685997  0.010830
+4             4  0.000254  0.015949  0.705713  0.009323
+5             5  0.000599  0.024475  0.663046  0.013502
+6             6  0.000422  0.020536  0.677479  0.010881
+7             7  0.000127  0.011278  0.264128  0.006815
+8             8  0.000525  0.022903  0.678881  0.012922
+9             9  0.000351  0.018734  0.701444  0.009964

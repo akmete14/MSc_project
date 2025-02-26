@@ -1,27 +1,19 @@
-import pandas as pd
 import glob
-import numpy as np
+import pandas as pd
 
-# Load the existing results.csv
-results_df = pd.read_csv("results.csv")
+# Find all CSV files that match the pattern
+csv_files = glob.glob("results_site_*.csv")
 
-# Get the new CSV files that were forgotten
-new_csv_files = glob.glob("results_site_*.csv")
+# Read each CSV into a DataFrame and combine them
+df_list = [pd.read_csv(file) for file in csv_files]
+merged_df = pd.concat(df_list, ignore_index=True)
 
-# Read and concatenate the new CSV files
-new_df_list = [pd.read_csv(file) for file in new_csv_files]
-new_data_df = pd.concat(new_df_list, ignore_index=True)
-new_data_df["ensemble_rmse"] = np.sqrt(new_data_df["ensemble_mse_scaled"])
-new_data_df["full_rmse"] = np.sqrt(new_data_df["full_mse_scaled"])
+# Sort by the 'site_left_out' column (change the column name if necessary)
+merged_df = merged_df.sort_values(by='site')
 
-# Merge with the existing results
-updated_df = pd.concat([results_df, new_data_df], ignore_index=True)
+# Save the merged and sorted DataFrame to a new CSV
+merged_df.to_csv("results_screened_all_metrics.csv", index=False)
 
-# Sort by 'site' column
-updated_df = updated_df.sort_values(by='site')
+print("Merged CSV saved as merged_results_LOSO.csv")
 
-# Save the updated results.csv
-updated_df.to_csv("results_2.csv", index=False)
-
-print("Updated results.csv with new data and sorted by site.")
 

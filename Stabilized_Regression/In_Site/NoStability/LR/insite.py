@@ -22,7 +22,7 @@ df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
 df = df.fillna(0)
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
-df = df.drop(columns=['Unnamed: 0', 'cluster'])
+df = df.drop(columns=['Unnamed: 0'])
 print("Columns:", df.columns)
 print("Loaded dataframe.")
 

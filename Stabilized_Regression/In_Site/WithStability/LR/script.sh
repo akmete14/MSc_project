@@ -15,4 +15,4 @@ module spider gcc/8.5.0
 
 source /cluster/project/math/akmete/Setup/.venv/bin/activate
 
-python /cluster/project/math/akmete/MSc/Stabilized_Regression/In_Site/WithStability/LR/insite.py --site_index ${SLURM_ARRAY_TASK_ID}
+python /cluster/project/math/akmete/MSc/Stabilized_Regression/In_Site/WithStability/LR/insite_lasso.py --site_index ${SLURM_ARRAY_TASK_ID}

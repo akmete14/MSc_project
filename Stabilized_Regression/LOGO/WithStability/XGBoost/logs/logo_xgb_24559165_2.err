@@ -1,0 +1,9 @@
+Many modules are hidden in this stack. Use "module --show_hidden spider SOFTWARE" if you are not able to find the required software
+
+The following have been reloaded with a version change:
+  1) stack/.2024-04-silent => stack/2024-04
+
+/cluster/home/akmete/Setup/.venv/lib/python3.11/site-packages/xgboost/sklearn.py:546: RuntimeWarning: invalid value encountered in divide
+  return all_features / all_features.sum()
+Evaluating subsets for cluster 2:   0%|          | 0/127 [00:00<?, ?it/s]Evaluating subsets for cluster 2:   1%|          | 1/127 [24:09<50:43:37, 1449.35s/it]Evaluating subsets for cluster 2:   2%|▏         | 2/127 [47:19<49:06:42, 1414.42s/it]Evaluating subsets for cluster 2:   2%|▏         | 3/127 [1:05:43<43:50:04, 1272.62s/it]Evaluating subsets for cluster 2:   3%|▎         | 4/127 [1:24:11<41:15:46, 1207.69s/it]Evaluating subsets for cluster 2:   4%|▍         | 5/127 [1:42:45<39:47:13, 1174.04s/it]Evaluating subsets for cluster 2:   5%|▍         | 6/127 [1:50:52<31:36:14, 940.28s/it] Evaluating subsets for cluster 2:   6%|▌         | 7/127 [2:04:37<30:05:24, 902.70s/it]Evaluating subsets for cluster 2:   6%|▋         | 8/127 [2:35:24<39:46:39, 1203.36s/it]Evaluating subsets for cluster 2:   7%|▋         | 9/127 [3:05:39<45:42:18, 1394.39s/it]Evaluating subsets for cluster 2:   8%|▊         | 10/127 [3:40:01<52:01:21, 1600.70s/it]Evaluating subsets for cluster 2:   9%|▊         | 11/127 [4:08:46<52:48:06, 1638.68s/it]/var/spool/slurm/slurmd/state/job24559176/slurm_script: line 18: 316312 Killed                  python /cluster/project/math/akmete/MSc/Stabilized_Regression/LOGO/WithStability/XGBoost/logo_screened.py --test_cluster $SLURM_ARRAY_TASK_ID
+slurmstepd: error: Detected 1 oom_kill event in StepId=24559176.batch. Some of the step tasks have been OOM Killed.

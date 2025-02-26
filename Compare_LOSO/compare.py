@@ -4,11 +4,73 @@ matplotlib.use('Agg')  # Use a non-interactive backend
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import os
 
-df_xgb = pd.read_csv('/cluster/project/math/akmete/MSc/LOSO/xgb.csv')
-df_lstm = pd.read_csv('/cluster/project/math/akmete/MSc/LOSO/lstm.csv')
+# Read in the data
+df_xgb = pd.read_csv('/cluster/project/math/akmete/MSc/XGBoost/LOSO/results.csv')
+df_lstm = pd.read_csv('/cluster/project/math/akmete/MSc/LSTM/LOSO/results.csv')
 df_irm = pd.read_csv('/cluster/project/math/akmete/MSc/IRM/LOSO/results_global_scaling/results.csv')
+df_lr = pd.read_csv('/cluster/project/math/akmete/MSc/IRM/LOSO/results_global_scaling/results.csv')
 
+# Standardize column names for the common metrics
+df_xgb.rename(columns={'r2_score': 'r2'}, inplace=True)
+df_irm.rename(columns={'site_id': 'site'}, inplace=True)
+df_lr.rename(columns={'site_left_out': 'site'}, inplace=True)
+# df_lstm already has the correct column names for our purposes
+
+# Define the list of common metrics
+common_metrics = ['mse', 'rmse', 'r2', 'relative_error', 'mae']
+
+# Dictionary mapping model names to their corresponding DataFrames
+models = {
+    'XGB': df_xgb,
+    'LSTM': df_lstm,
+    'IRM': df_irm,
+    'LR': df_lr
+}
+
+# Create folder for saving plots if it doesn't exist
+output_folder = 'plots'
+os.makedirs(output_folder, exist_ok=True)
+
+# Loop over each metric and create a boxplot comparing all models with moderate filtering of extreme outliers
+for metric in common_metrics:
+    plt.figure(figsize=(8, 6))
+    
+    plot_data = []
+    for model_name, df in models.items():
+        if metric in df.columns:
+            values = df[metric]
+            # Filter out the bottom and top 5% of values
+            lower_bound = values.quantile(0.05)
+            upper_bound = values.quantile(0.95)
+            filtered_values = values[(values >= lower_bound) & (values <= upper_bound)]
+            
+            temp = pd.DataFrame({
+                'Model': model_name,
+                'Value': filtered_values
+            })
+            plot_data.append(temp)
+        else:
+            print(f"Warning: {metric} not found in {model_name} dataframe.")
+    
+    if not plot_data:
+        continue
+
+    combined_df = pd.concat(plot_data, ignore_index=True)
+    
+    sns.boxplot(x='Model', y='Value', data=combined_df)
+    plt.title(f'Comparison of {metric.upper()} across Models')
+    plt.xlabel('Model')
+    plt.ylabel(metric.upper())
+    
+    # Save the plot instead of displaying it
+    plot_path = os.path.join(output_folder, f'{metric}_boxplot.png')
+    plt.savefig(plot_path)
+    plt.close()
+
+
+'''
 # Rename in df_irm 'site_id' into 'site_left_out'
 df_irm = df_irm.rename(columns={'site_id': 'site_left_out', 'mse': 'mse_scaled', 'rmse': 'rmse_scaled'})
 
@@ -29,7 +91,9 @@ df_merged = pd.merge(df_merged, df_irm, on="site", how="outer")
 # List of RMSE columns to process
 rmse_columns = ["rmse_scaled_xgb", "rmse_scaled_lstm", "rmse_scaled_irm"]
 
-'''# Function to remove outliers using IQR method
+'''
+'''
+# Function to remove outliers using IQR method
 def remove_outliers(df, columns):
     for col in columns:
         Q1 = df[col].quantile(0.25)  # First quartile (25th percentile)
@@ -42,6 +106,7 @@ def remove_outliers(df, columns):
 
 # Remove outliers
 df_filtered = remove_outliers(df_merged, rmse_columns)
+'''
 '''
 # Convert to long format for plotting
 df_melted = pd.melt(
@@ -134,4 +199,4 @@ plt.grid(True, linestyle="--", alpha=0.5)
 
 # Show the plot
 plt.tight_layout()
-plt.savefig('test.png', dpi=300)
+plt.savefig('test.png', dpi=300)'''
