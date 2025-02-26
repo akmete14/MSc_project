@@ -32,7 +32,7 @@ Assume you already uploaded the data and created a virtual environment.
 The implementation of the preprocessing can be found in **../preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in the thesis in Chapter 2.  If you are interested in predicting also other fluxes than the GPP you can adjust the python file accordingly. If, for example, you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
 
 ### Shell file
-The shell files are important when you work on clusters which require scheduling jobs. In a shell file, you first specify the time and memory you need for running the job. Moreover, you specify the modules you need to load so that the packages you use in the python scripts are loaded appropriately. Next to the modules, you will also activate the virtual environment which you created. In the end of the shell file, you express the command which you want to be executed, for example **python path/to/your/file/filename.py**. A shell file can look like this
+The shell files are important when you work on clusters which require scheduling jobs. In a shell file, you first specify the time and memory you need for running the job. Moreover, you specify the modules you need to load so that the packages you use in the python scripts are loaded appropriately. Next to the modules, you will also activate the virtual environment which you created. In the end of the shell file, you express the command which you want to be executed, for example **python path/to/your/script.py**. A shell file can look like this
 ## Example Shell Script
 
 Below is an example of a shell script that demonstrates a simple job submission process.
@@ -48,13 +48,10 @@ Below is an example of a shell script that demonstrates a simple job submission 
 #SBATCH --ntasks=1                # Number of tasks
 #SBATCH --cpus-per-task=4         # CPU cores per task
 #SBATCH --mem=8G                  # Memory per node
-#SBATCH --partition=default       # Partition (queue)
 
-echo "Starting job on $(hostname)"
-date
+# Load modules and activate venv
+module load python/3.8
+source ~/myenv/bin/activate
 
 # Run your command here
-python my_script.py
-
-echo "Job finished"
-date
+python path/to/your/script.py
