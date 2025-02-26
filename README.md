@@ -40,7 +40,7 @@ The job is now scheduled and depending on your priority in the queue you have to
 ```sh
 $ squeue -u<username>
 ```
-in the terminal (replace <username> with your username). If there are some intermediate prints within the python code, you can check them in the log-files which are being created as soon as the job is being executed. Now, you know how to reproduce all experiments which are already implemented. Next, I want to explain how you can run your own experiments on the FLUXNET data.
+in the terminal (replace <username> with your username). If there are some intermediate prints within the python code, you can check them in the log-files which are being created as soon as the job is being executed. Now, you know how to reproduce all experiments which are already implemented. Next, I explain how you can run your own experiments on the FLUXNET data.
 
 ## Running your own methods
 Assume you already uploaded the data and created a virtual environment. The first step is to consider the preprocessing of the data.
