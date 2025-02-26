@@ -37,7 +37,7 @@ $ squeue -u<username>
 ```
 in the terminal (replace <username> with your username). If there are some intermediate prints within the python code, you can check them in the log-files which are being created as soon as the job is being executed. Now, you know how to reproduce all experiments which are already implemented. Next, I explain how you can run your own experiments on the FLUXNET data. I will show it at the example of the In-Site experimental setting.
 
-## Running your own methods
+## Run your own methods
 Assume you already uploaded the data and created a virtual environment. The first step is to consider the preprocessing of the data.
 
 ### Preprocessing data
@@ -160,7 +160,7 @@ After writing the shell file, make it executable by typing
 ```sh
 $ chmod +x script.sh
 ```
-Now, the job can be submitted by entering
+Finally, the job can be submitted by entering
 ```sh
 $ sbatch script.sh
 ```
