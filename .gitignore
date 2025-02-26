@@ -30,3 +30,10 @@ Stabilized_Regression/In_Site/NoStability/XGBoost/logs
 Stabilized_Regression/LOGO/NoStability/LR/logs
 Stabilized_Regression/LOGO/NoStability/XGBoost/logs
 Stabilized_Regression/LOGO/WithStability/LR/logs
+CompareLOGO_XGB/
+Compare_SR/
+LOGO/
+LOGO_XGB_vs_LSTM/
+LOGO_test/
+LOSO/
+XGBvsLSTM_OnSite/

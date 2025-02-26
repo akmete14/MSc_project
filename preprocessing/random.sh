@@ -2,8 +2,8 @@
 
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --time=01:00:00
-#SBATCH --mem-per-cpu=35840
+#SBATCH --time=00:10:00
+#SBATCH --mem-per-cpu=20000
 #SBATCH --mail-type=BEGIN,END
 #SBATCH --mail-user=akmete@student.ethz.ch
 
@@ -17,5 +17,4 @@ source /cluster/project/math/akmete/Setup/.venv/bin/activate
 # Change to the directory where your Python script is located
 #cd /cluster/project/math/akmete/MSc/preprocessing
 
-python /cluster/project/math/akmete/MSc/preprocessing/test2.py
-
+python /cluster/project/math/akmete/MSc/preprocessing/random_grouping.py

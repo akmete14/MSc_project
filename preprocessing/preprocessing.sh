@@ -17,4 +17,4 @@ source /cluster/project/math/akmete/Setup/.venv/bin/activate
 # Change to the directory where your Python script is located
 #cd /cluster/project/math/akmete/MSc/preprocessing
 
-python /cluster/project/math/akmete/MSc/preprocessing/replacemaskswithnan.py
+python /cluster/project/math/akmete/MSc/preprocessing/preprocessing.py
