@@ -12,8 +12,7 @@ To reproduce the experiments, ensure you have access to the FLUXNET data. Then, 
 This git implements the above listed methods. It assumes that data is uploaded into the main directory in a folder called "Data". For every method, there is a corresponding folder in the main directoy. It contains the three different Set-Ups **In-Site**, **LOSO** and **LOGO**. Every Set-Up contains the **python** file for the implementation of the method in the corresponding setting, a **shell** file for scheduling the jobs and a **csv**  file with the results. The use of the shell files is for scheduling the jobs as it is needed when working with Euler. However, if you are not working with a system requiring scheduling, I still recommend to look into the shell file to see how many ressources are necessary so that the job works. The ressources requested in the shell file are not optimal, in the sense that the code might also work with less ressources. However, requesting the same ressources will surely execute the job successfully.
 
 ## Guide on how to reproduce the experiments
-After cloning the git and uploading the data, I give you now a short guide on how to reproduce experiments. For this reason, assume that we want to reproduce the experiments of the linear regression method in the In-Site setting.
-The first thing you have to do is to create a virtual environment.
+After cloning the git and uploading the data, I give you now a short guide on how to reproduce the experiments. The first thing you have to do is to create a virtual environment.
 
 ### Setting up a virtual environment
 The cleanest way to be able to run the experiments is to use a virtual environment. A list of the dependencies needed in this environment for running the experiments can be found in the **requirements.txt** file. Use this file to create the virtual environment.
