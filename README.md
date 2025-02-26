@@ -55,3 +55,20 @@ source ~/myenv/bin/activate
 
 # Run your command here
 python path/to/your/script.py
+
+TEST:
+## Example Python Script
+
+Below is a snippet from `my_script.py`:
+
+```python
+import time
+
+def main():
+    print("Job started...")
+    time.sleep(5)
+    print("Job completed.")
+
+if __name__ == "__main__":
+    main()
+
