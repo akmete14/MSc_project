@@ -4,7 +4,7 @@ preprocessing/df_balanced_groups_nonans.csv
 preprocessing/train_data.csv
 preprocessing/test_data.csv
 preprocessing/groupings/df_random_grouping_constraint_similar_size.csv
-preprocessing/groupings/df_random_grouping.csv
+preprocessing/df_random_grouping.csv
 preprocessing/df_balanced_groups_onevegindex.csv
 Stabilized_Regression/LOSO/ignore
 IRM/LOGO/logs
