@@ -27,3 +27,6 @@ Stabilized_Regression/LOSO/5_sites/dataframe_5_sites_test.csv
 Stabilized_Regression/In_Site/WithStability/LR/logs
 LSTM/LOGO/logs
 Stabilized_Regression/In_Site/NoStability/XGBoost/logs
+Stabilized_Regression/LOGO/NoStability/LR/logs
+Stabilized_Regression/LOGO/NoStability/XGBoost/logs
+Stabilized_Regression/LOGO/WithStability/LR/logs
