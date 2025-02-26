@@ -25,11 +25,11 @@ The first step in order to run the experiment is to change into the correspondin
 
 Now, you know how to reproduce the experiments. Next, I want to explain how you run your own experiments on the FLUXNET data.
 
-## Running your own methods - shown at In-Site experiment
-Assume you already uploaded the data and created a virtual environment.
+## Running your own methods
+Assume you already uploaded the data and created a virtual environment. The first step is to consider the preprocessing of the data.
 
 ### Preprocessing data
-The implementation of the preprocessing can be found in **../preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in the thesis in Chapter 2.  If you are interested in predicting also other fluxes than the GPP you can adjust the python file accordingly. If, for example, you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
+The implementation of the preprocessing can be found in **preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in the thesis in Chapter 2.  If you are interested in predicting also other fluxes than the GPP, you can adjust the python file accordingly. For example if you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
 
 Below is a snippet from `../preprocessing/preprocessing.py`, but including the NEE:
 
