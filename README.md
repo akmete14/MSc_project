@@ -36,13 +36,11 @@ Submitted batch job 1234567
 
 
 
-Now, the job is already scheduled and depending on your priority in the queue you have to wait some time until the job is running. To check whether the job is already being executed or still queueing you can type 
+The job is now scheduled and depending on your priority in the queue you have to wait some time until the job is being executed. To check the status of the job, type in 
 ```sh
-squeue -u<username>
+$ squeue -u<username>
 ```
-in the terminal (replace <username> with your username). If there are some intermediate prints within the python code, you can check them in the log-files which are being created as soon as the job is being executed.
-
-Now, you know how to reproduce the experiments. Next, I want to explain how you run your own experiments on the FLUXNET data.
+in the terminal (replace <username> with your username). If there are some intermediate prints within the python code, you can check them in the log-files which are being created as soon as the job is being executed. Now, you know how to reproduce all experiments which are already implemented. Next, I want to explain how you can run your own experiments on the FLUXNET data.
 
 ## Running your own methods
 Assume you already uploaded the data and created a virtual environment. The first step is to consider the preprocessing of the data.
