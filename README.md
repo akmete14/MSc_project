@@ -46,7 +46,7 @@ def initialize_dataframe(file1, file2, file3, path):
 
 Given the desired preprocessed data, you can start setting up the In-Site experiment. Doing so depends highly on the implementation of the method. Generally, the structure is as follows
 ### Reading the data
-First, read in the data which we preprocessed:
+First, read in the data which we preprocessed and define the feature set and target variable:
 ```python
 # Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
