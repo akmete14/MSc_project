@@ -6,16 +6,14 @@ This git implements some pooling and domain generalization methods, applied to t
 4. Invariant Risk Minimization (IRM),
 5. Stabilized Regression (SR).
 
-To reproduce the experiments, ensure you have access to the FLUXNET data. Then, clone this repository into your preffered code editor and, in the main directory, create a folder called "Data". Next, upload the data into this folder. Due to the large amount of data, this can take up to an hour. Make sure that the "Data" folder is listed in **.gitignore**. This ensures that you don't upload large amount of data into Github when pushing changes to the repository.
+To reproduce the experiments, ensure you have access to the FLUXNET data. Next, clone this repository. In the main directory, create a folder called "Data" and copy the data into this folder. Due to the large amount of data, this can take a while. Make sure that the "Data" folder is listed in **.gitignore** to ensure that you don't upload large amounts of data when pushing changes to the repository.
 
 ## Structure of the git
-This git implements the above listed methods. It assumes that data is uploaded into the main directory in a folder called "Data". For every method, there is a corresponding folder in the main directoy. It contains the three different Set-Ups **In-Site**, **LOSO** and **LOGO**. Every Set-Up contains the **python** file for the implementation of the method in the corresponding setting, a **shell** file for scheduling the jobs and a **csv**  file with the results. The use of the shell files is for scheduling the jobs as it is needed when working with Euler. However, if you are not working with a system requiring scheduling, I still recommend to look into the shell file to see how many ressources are necessary so that the job works. The ressources requested in the shell file are not optimal, in the sense that the code might also work with less ressources. However, requesting the same ressources will surely execute the job successfully.
+This git implements the above listed methods. It assumes that data is copied into the main directory in a folder called "Data". For every method, there is a corresponding folder in the main directoy. It contains three different Set-Ups **In-Site**, **LOSO** and **LOGO**. Every Set-Up contains a **python** file for the implementation of the method in the corresponding setting, a **shell** file for scheduling the jobs and a **csv**  file with the results. The use of the shell files is for scheduling the jobs as it is needed when working with Euler. However, if you are not working with a system requiring scheduling, I still recommend to look into the shell file to see how many ressources are necessary so that the job works. The ressources requested in the shell file are not optimal, in the sense that the code might also work with less ressources. However, requesting the same ressources will surely execute the job successfully.
 
 ## Guide on how to reproduce the experiments
-After cloning the git and uploading the data, I give you now a short guide on how to reproduce the experiments. The cleanest way to be able to run the experiments is by creating a virtual environment.
-
 ### Setting up a virtual environment
-A list of the dependencies needed in this environment can be found in the **requirements.txt** file. Use this file to create the virtual environment.
+The cleanest way to be able to run the experiments is by creating a virtual environment. A list of the dependencies needed in this environment can be found in the **requirements.txt** file. Use this file to create the virtual environment.
 After creating the virtual environment, we are set to reproduce the experiments.
 
 As an example to show how to schedule jobs, we will schedule the job for the In-Site experiment of the Linear Regression method.
@@ -80,22 +78,24 @@ results = {}
 # Define the sites to be processed (for sequential execution)
 sites_to_process = df['site_id'].unique()
 ```
-Next, we for every site do a chronological 80/20 train/test split, then scale the data and finally train the model and do the predictions. Moreover, save the metrics you are interested in
+Given all sitenames (from the site_id column of the dataframe from the preprocessing), we can consider now the for loop. That is, for every site we do the following: First we split the data of the site into a chronological 80/20 train/test split
 ```python
-# Process each selected site
-for site in sites_to_process:
-    group = df[df['site_id'] == site]
+# Extract data belonging to this site
+group = df[df['site_id'] == site]
     
-    # Perform an 80/20 chronological split
-    n_train = int(len(group) * 0.8)
-    train = group.iloc[:n_train]
-    test  = group.iloc[n_train:]
-    
-    # Extract features and target variables
-    X_train = train[feature_columns]
-    y_train = train[target_column]
-    X_test  = test[feature_columns]
-    y_test  = test[target_column]
+# Perform an 80/20 chronological split
+n_train = int(len(group) * 0.8)
+train = group.iloc[:n_train]
+test  = group.iloc[n_train:]
+```
+Next, we define train and test of the features and the target and scale everything
+the data and finally train the model and do the predictions. Moreover, save the metrics you are interested in
+```python
+# Extract features and target variables
+X_train = train[feature_columns]
+y_train = train[target_column]
+X_test  = test[feature_columns]
+y_test  = test[target_column]
     
     # Scale features using MinMaxScaler
     scaler_X = MinMaxScaler()
