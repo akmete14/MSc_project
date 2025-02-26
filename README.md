@@ -31,7 +31,7 @@ Assume you already uploaded the data and created a virtual environment.
 ### Preprocessing data
 The implementation of the preprocessing can be found in **../preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in the thesis in Chapter 2.  If you are interested in predicting also other fluxes than the GPP you can adjust the python file accordingly. If, for example, you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
 
-Below is a snippet from `../preprocessing/preprocessing.py` but including the NEE:
+Below is a snippet from `../preprocessing/preprocessing.py`, but including the NEE:
 
 ```python
 def initialize_dataframe(file1, file2, file3, path):
@@ -43,6 +43,9 @@ def initialize_dataframe(file1, file2, file3, path):
     dt = xr.open_dataset(path + file3, engine='netcdf4')
     dt = dt[['LST_TERRA_Day','LST_TERRA_Night','EVI','NIRv','NDWI_band7','LAI','fPAR']]
 ```
+
+Given the desired preprocessed data, you can start setting up the In-Site experiment. Doing so depends highly on the implementation of the method. Generally, the structure is as follows
+### Reading the data 
 
 ### Shell file
 The shell files are important when you work on clusters which require scheduling jobs. In a shell file, you first specify the time and memory you need for running the job. Moreover, you specify the modules you need to load so that the packages you use in the python scripts are loaded appropriately. Next to the modules, you will also activate the virtual environment which you created. In the end of the shell file, you express the command which you want to be executed, for example **python path/to/your/script.py**. A shell file can look like this
