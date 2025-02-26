@@ -39,9 +39,10 @@ in the terminal (replace <username> with your username). If there are some inter
 
 ## Run your own methods
 ### Preprocessing data
-After having uploaded the data and created the virtual environment, the first step for running your own method is to consider the preprocessing of the data. The implementation of the preprocessing can be found in **preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in the thesis in Chapter 2.  If you are interested in predicting also other fluxes next to the GPP, you can adjust the python file accordingly. For example if you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
+After having uploaded the data and created the virtual environment, the first step for running your own method is to consider the preprocessing of the data.
+The implementation of the preprocessing can be found in **preprocessing/preprocessing.py**. The file reads in the data and exectues the preprocessing steps as discussed in Chapter 2. If you are interested in predicting also other fluxes next to the GPP, you can adjust the python file accordingly. For example if you want to consider the NEE as target variable, then include it in the **initialize_dataframe** function. Also don't forget to include the corresponding quality control variable NEE_qc, which will be used later when filtering for good quality data.
 
-Below is a snippet from `../preprocessing/preprocessing.py`, but including the NEE:
+Below is a example snippet from `../preprocessing/preprocessing.py`, that includes the NEE:
 
 ```python
 def initialize_dataframe(file1, file2, file3, path):
@@ -53,7 +54,7 @@ def initialize_dataframe(file1, file2, file3, path):
     dt = xr.open_dataset(path + file3, engine='netcdf4')
     dt = dt[['LST_TERRA_Day','LST_TERRA_Night','EVI','NIRv','NDWI_band7','LAI','fPAR']]
 ```
-Given the desired preprocessed data, you can start setting up the In-Site experiment. Doing so depends highly on the implementation of the method. Generally, the structure is as follows
+After choosing the preprocessing of the data, you can start setting up the In-Site experiment. The following implementation is following the structure for a method implemented using sklearn
 ### Reading the data and defining features & target variable
 First, read in the data which we preprocessed and define the feature set and target variable:
 ```python
@@ -109,7 +110,7 @@ else:
     y_train_scaled = (y_train - y_train_min) / (y_train_max - y_train_min)
     y_test_scaled  = (y_test - y_train_min) / (y_train_max - y_train_min)
 
-````
+```
 Finally, we define the regressor, fit the model and evaluate using different metrics
 ```python
 # Train a linear regression model on the scaled training data
