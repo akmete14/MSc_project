@@ -56,7 +56,7 @@ def initialize_dataframe(file1, file2, file3, path):
     dt = dt[['LST_TERRA_Day','LST_TERRA_Night','EVI','NIRv','NDWI_band7','LAI','fPAR']]
 ```
 Given the desired preprocessed data, you can start setting up the In-Site experiment. Doing so depends highly on the implementation of the method. Generally, the structure is as follows
-### Reading the data and defining features and target variable
+### Reading the data and defining features & target variable
 First, read in the data which we preprocessed and define the feature set and target variable:
 ```python
 # Load and preprocess data
