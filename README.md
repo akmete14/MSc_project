@@ -14,28 +14,8 @@ This git implements the methods listed above. It assumes that data is copied int
 ## Guide on how to reproduce the experiments
 ### Setting up a virtual environment
 The cleanest way to be able to run the experiments is by creating a virtual environment. A list of the dependencies needed in this environment can be found in the **requirements.txt** file. Use this file to create the virtual environment.
-After creating the virtual environment, we are set to reproduce the experiments.
-
-As an example to show how to schedule jobs, we will schedule the job for the In-Site experiment of the Linear Regression method.
-### Scheduling a job
-The first step in order to run the experiment is to change into the corresponding directory, in our case by typing
-```sh
-$ cd LR/In_Site/
-```
-in the terminal. After changing the directory, you can submit the job by entering 
-```sh
-$ sbatch script.sh
-```
-in the terminal. This will batch the shell file **script.sh**. If the job was successfully submitted, you should see an output like
-```sh
-$ sbatch script.sh
-Submitted batch job 1234567
-```
-The job is now scheduled and depending on your priority in the queue you have to wait some time until the job is being executed. To check the status of the job, type in 
-```sh
-$ squeue -u<username>
-```
-in the terminal (replace <username> with your username). If there are some intermediate prints within the Python code, you can check them in the log files that are being created as soon as the job is being executed. Now, you know how to reproduce all the experiments which have already been implemented. Next, I explain how you can run your own experiments on the FLUXNET data. I will show it in an example of the In-Site experimental setting.
+After creating the virtual environment, we are set to reproduce the experiments. By activating the virtual environment, the scripts can be executed in the terminal. If you want to schedule the jobs, just submit the shell file by typing `sbatch script.sh` into the terminal, which will submit the job.
+Next, I explain how you can run your own experiments on the FLUXNET data. I will show it in an example of the In-Site experimental setting.
 
 ## Run your own methods
 ### Preprocessing data
