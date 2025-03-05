@@ -15,6 +15,7 @@ This git implements the methods listed above. It assumes that data is copied int
 ### Setting up a virtual environment
 The cleanest way to be able to run the experiments is by creating a virtual environment. A list of the dependencies needed in this environment can be found in the **requirements.txt** file. Use this file to create the virtual environment.
 After creating the virtual environment, we are set to reproduce the experiments. By activating the virtual environment, the scripts can be executed in the terminal. If you want to schedule the jobs, just submit the shell file by typing `$ sbatch script.sh` into the terminal, which will submit the job.
+
 Next, I explain how you can run your own experiments on the FLUXNET data. I will show it in an example of the In-Site experimental setting.
 
 ## Run your own methods
