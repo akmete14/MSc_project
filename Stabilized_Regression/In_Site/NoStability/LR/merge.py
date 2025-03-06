@@ -1,17 +1,40 @@
-import glob
 import pandas as pd
+import glob
+import os
 
-# Find all CSV files that match the pattern
-csv_files = glob.glob("results_site_*.csv")
+# Define the path where CSV files are located
+csv_folder = "/cluster/project/math/akmete/MSc/Stabilized_Regression/In_Site/NoStability/LR/"
 
-# Read each CSV into a DataFrame and combine them
-df_list = [pd.read_csv(file) for file in csv_files]
-merged_df = pd.concat(df_list, ignore_index=True)
+# Find all files matching the pattern "results_site_*"
+csv_files = glob.glob(os.path.join(csv_folder, "**/results_site_*.csv"), recursive=True)
 
-# Sort by the 'site_left_out' column (change the column name if necessary)
-merged_df = merged_df.sort_values(by='site')
+# Use a temporary location for writing first (e.g., /tmp/)
+temp_merged_csv = "/tmp/merged_results.csv"
+final_merged_csv = os.path.join(csv_folder, "merged_results.csv")
 
-# Save the merged and sorted DataFrame to a new CSV
-merged_df.to_csv("results_lasso.csv", index=False)
+# Open the merged CSV file in append mode
+header_written = False  # Ensure header is written only once
 
-print("Merged CSV saved as merged_results_LOSO.csv")
+with open(temp_merged_csv, "w") as merged_file:
+    for file in csv_files:
+        try:
+            # Read the CSV file (each file has only one row)
+            df = pd.read_csv(file)
+
+            # Append to the merged file
+            df.to_csv(merged_file, index=False, header=not header_written, mode="a")
+            header_written = True  # Ensure header is written only once
+
+            # Delete the CSV immediately after processing (free space)
+            os.remove(file)
+            print(f"✅ Merged & deleted: {file}")
+
+        except Exception as e:
+            print(f"❌ Error processing {file}: {e}")
+
+# Move merged file back to the correct location
+os.rename(temp_merged_csv, final_merged_csv)
+
+print(f"\n📌 Merged CSV saved at: {final_merged_csv}")
+
+

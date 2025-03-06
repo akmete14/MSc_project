@@ -20,7 +20,7 @@ df = df.fillna(0)
 for col in df.select_dtypes(include=['float64']).columns:
     df[col] = df[col].astype('float32')
 # Drop unnecessary columns.
-df = df.drop(columns=['Unnamed: 0'])
+df = df.drop(columns=['Unnamed: 0', 'cluster'])
 print("Loaded dataframe with columns:", df.columns)
 
 # Define features and target.

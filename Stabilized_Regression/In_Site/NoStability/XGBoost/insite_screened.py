@@ -87,10 +87,14 @@ def compute_scores_insite(df_site, feature_subset, target_column):
     
     y_train_min = y_train.min()
     y_train_max = y_train.max()
+
     if y_train_max - y_train_min == 0:
         y_train_scaled = y_train.values
+        y_test_scaled = y_test.values
     else:
         y_train_scaled = (y_train - y_train_min) / (y_train_max - y_train_min)
+        y_test_scaled = (y_test - y_train_min) / (y_train_max - y_train_min)
+
     
     model = XGBRegressor(objective='reg:squarederror',
                          n_estimators=100,
@@ -101,12 +105,12 @@ def compute_scores_insite(df_site, feature_subset, target_column):
     model.fit(X_train_scaled, y_train_scaled)
     
     # Compute prediction score as negative MSE on training data
-    y_pred_train = model.predict(X_train_scaled)
-    mse_train = mean_squared_error(y_train_scaled, y_pred_train)
-    pred_score = -mse_train
+    y_pred = model.predict(X_test_scaled)
+    mse = mean_squared_error(y_test_scaled, y_pred)
+    pred_score = -mse
     
     # Stability score: variance of squared errors on training data
-    squared_errors = (y_train_scaled - y_pred_train) ** 2
+    squared_errors = (y_test_scaled - y_pred) ** 2
     stab_score = np.var(squared_errors, ddof=1) if len(squared_errors) > 1 else 0
     
     return pred_score, stab_score, model, scaler, y_train_min, y_train_max
