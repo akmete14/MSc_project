@@ -41,3 +41,6 @@ Stabilized_Regression/In_Site/NoStability/LR/logs
 Stabilized_Regression/LOSO/NoStability/LR/logs
 Stabilized_Regression/LOSO/WithStability/LR/logs
 Stabilized_Regression/LOSO/WithStability/LR/plots
+Stabilized_Regression/LOSO/NoStability/LR/plots
+Stabilized_Regression/LOSO/NoStability/XGBoost/logs
+Stabilized_Regression/LOSO/WithStability/XGBoost/logs
