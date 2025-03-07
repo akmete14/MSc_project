@@ -43,8 +43,8 @@ for metric in common_metrics:
             values = df[metric]
             # Filter out the bottom and top 5% of values
             lower_bound = values.quantile(0.05)
-            upper_bound = values.quantile(0.95)
-            filtered_values = values[(values >= lower_bound) & (values <= upper_bound)]
+            upper_bound = values.quantile(0.98)
+            filtered_values = values[(values <= upper_bound)]
             
             temp = pd.DataFrame({
                 'Model': model_name,
