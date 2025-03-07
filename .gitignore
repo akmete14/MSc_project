@@ -21,12 +21,10 @@ IRM/OnSite/logs
 LSTM/LOSO/logs
 Stabilized_Regression/In_Site/WithStability/XGBoost/logs
 IRM/LOGO/LOGO_balanced_grouping/logs
-Stabilized_Regression/In_Site/NoStability/LR/logs
 Stabilized_Regression/In_Site/WithStability/LR/logsStabilized_Regression/LOSO/5_sites_onevegindex/dataframe_5_sites_test_onevegindex.csv
 Stabilized_Regression/LOSO/5_sites/dataframe_5_sites_test.csv
 Stabilized_Regression/In_Site/WithStability/LR/logs
 LSTM/LOGO/logs
-Stabilized_Regression/In_Site/NoStability/XGBoost/logs
 Stabilized_Regression/LOGO/NoStability/LR/logs
 Stabilized_Regression/LOGO/NoStability/XGBoost/logs
 Stabilized_Regression/LOGO/WithStability/LR/logs
@@ -35,7 +33,11 @@ Compare_SR/
 /LOGO/
 LOGO_XGB_vs_LSTM/
 LOGO_test/
-LOSO/
+LOSO_XGBLSTM/
 XGBvsLSTM_OnSite/
 Stabilized_Regression/LOGO/WithStability/XGBoost/logs
 LSTM/old_scripts_and_results
+Stabilized_Regression/In_Site/NoStability/LR/logs
+Stabilized_Regression/LOSO/NoStability/LR/logs
+Stabilized_Regression/LOSO/WithStability/LR/logs
+Stabilized_Regression/LOSO/WithStability/LR/plots
