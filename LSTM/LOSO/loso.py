@@ -61,7 +61,7 @@ def create_sequences(X, y, seq_len=10):
 # -----------------------
 # Define output file for results
 # -----------------------
-output_file = 'results_LOSO.csv'
+output_file = 'results_LOSO_modified.csv'
 if not os.path.exists(output_file):
     with open(output_file, 'w') as f:
         f.write("site,test_loss,mse,r2,relative_error,mae,rmse\n")
@@ -98,8 +98,8 @@ for site in tqdm(sites_to_process, desc="Processing LOSO sites"):
     
     # Scale target using training statistics (min–max scaling)
     # Convert the scaled target to a numpy array to ensure integer-based indexing.
-    y_train_scaled_vals = ((y_train_raw - y_train_raw.mean()) / (y_train_raw.max() - y_train_raw.min())).to_numpy()
-    y_test_scaled_vals  = ((y_test_raw - y_train_raw.mean()) / (y_train_raw.max() - y_train_raw.min())).to_numpy()
+    y_train_scaled_vals = ((y_train_raw - y_train_raw.min()) / (y_train_raw.max() - y_train_raw.min())).to_numpy()
+    y_test_scaled_vals  = ((y_test_raw - y_train_raw.min()) / (y_train_raw.max() - y_train_raw.min())).to_numpy()
     
     # Scale features using MinMaxScaler (fit on training data)
     scaler = MinMaxScaler()

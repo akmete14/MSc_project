@@ -65,7 +65,7 @@ def create_sequences(X, y, seq_len=10):
 # -----------------------
 # Define output file for results
 # -----------------------
-output_file = 'results_LOGO.csv'
+output_file = 'results_LOGO_modified.csv'
 if not os.path.exists(output_file):
     with open(output_file, 'w') as f:
         f.write("cluster,test_loss,mse,r2,relative_error,mae,rmse\n")
@@ -101,8 +101,8 @@ for cluster in tqdm(clusters_to_process, desc="Processing LOGO clusters"):
     y_test_raw  = df_test[target_column]
     
     # Scale target using training statistics (min–max scaling)
-    y_train_scaled_vals = ((y_train_raw - y_train_raw.mean()) / (y_train_raw.max() - y_train_raw.min())).to_numpy()
-    y_test_scaled_vals  = ((y_test_raw - y_train_raw.mean()) / (y_train_raw.max() - y_train_raw.min())).to_numpy()
+    y_train_scaled_vals = ((y_train_raw - y_train_raw.min()) / (y_train_raw.max() - y_train_raw.min())).to_numpy()
+    y_test_scaled_vals  = ((y_test_raw - y_train_raw.min()) / (y_train_raw.max() - y_train_raw.min())).to_numpy()
     
     # Scale features using MinMaxScaler (fit on training data)
     scaler = MinMaxScaler()

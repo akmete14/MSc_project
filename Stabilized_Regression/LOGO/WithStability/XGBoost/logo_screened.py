@@ -65,7 +65,7 @@ temp_model.fit(X_train_screen_scaled, y_train_screen)
 importance = temp_model.feature_importances_
 feature_importance = dict(zip(initial_feature_columns, importance))
 sorted_features = sorted(feature_importance, key=feature_importance.get, reverse=True)
-top_k = 5
+top_k = 7
 selected_features = sorted_features[:top_k]
 print("Selected features after screening (top 7):", selected_features)
 

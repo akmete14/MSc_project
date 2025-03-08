@@ -55,7 +55,7 @@ temp_model.fit(X_train_screen_scaled, y_train_screen)
 importance = temp_model.feature_importances_
 feature_importance = dict(zip(initial_feature_columns, importance))
 sorted_features = sorted(feature_importance, key=feature_importance.get, reverse=True)
-top_k = 5
+top_k = 7
 selected_features = sorted_features[:top_k]
 print("Selected features after XGBoost screening (top 7):", selected_features)
 
@@ -222,7 +222,8 @@ results = {
     "full_relative_error": full_relative_error,
     "ensemble_mae": ensemble_mae,
     "full_mae": full_mae,
-    "O_hat_count": len(O_hat)
+    "O_hat_count": len(O_hat),
+    "O_hat": O_hat
 }
 
 results_df = pd.DataFrame([results])
