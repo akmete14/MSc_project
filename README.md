@@ -6,7 +6,7 @@ This git contains implementations of the following methods
 4. Invariant Risk Minimization (IRM),
 5. Stabilized Regression (SR with LR and XGB as underlying regressor).
 
-To reproduce the experiments, ensure that you have access to the FLUXNET dataset. Next, clone this repository. 
+To reproduce the experiments, ensure that you have access to the FLUXNET dataset.
 <!--
 In the main directory, create a folder called "Data" and copy the data into this folder. Due to the large amount of data, this can take some time. Make sure that the "Data" folder is listed in **.gitignore** to ensure that you don't upload large amounts of data when pushing changes to the repository.
 -->
