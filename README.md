@@ -1,13 +1,15 @@
 # Distribution Generalization in Dynamical Real-World Systems
-This git implements some pooling and domain generalization methods, applied to the FLUXNET data. The methods implemented are the following
+This git implements some pooling and domain generalization methods, applied to the FLUXNET dataset. The methods implemented are the following
 1. Linear Regression (LR),
 2. Extreme Gradient Boosting (XGBoost),
 3. Long Short-Term Memory (LSTM),
 4. Invariant Risk Minimization (IRM),
-5. Stabilized Regression (SR).
+5. Stabilized Regression (SR with LR and XGB as underlying regressor).
 
-To reproduce the experiments, ensure that you have access to the FLUXNET data. Next, clone this repository. In the main directory, create a folder called "Data" and copy the data into this folder. Due to the large amount of data, this can take some time. Make sure that the "Data" folder is listed in **.gitignore** to ensure that you don't upload large amounts of data when pushing changes to the repository.
-
+To reproduce the experiments, ensure that you have access to the FLUXNET data. Next, clone this repository. 
+<!--
+In the main directory, create a folder called "Data" and copy the data into this folder. Due to the large amount of data, this can take some time. Make sure that the "Data" folder is listed in **.gitignore** to ensure that you don't upload large amounts of data when pushing changes to the repository.
+-->
 ## Structure of the git
 This git implements the methods listed above. It assumes that data is copied into the main directory in a folder called "Data". For every method, there is a corresponding folder in the main directory. It contains three different setups **In-Site**, **LOSO** and **LOGO**. Each setup contains a **python** file for the implementation of the method in the corresponding setting, a **shell** file for scheduling the jobs, and a **csv**  file with the results. Shell files are used for scheduling jobs. However, if you are not working with scheduling, I still recommend to look into the shell file to see how many resources are necessary so that the job works. The resources requested in the shell file are not optimal in the sense that the code might also work with fewer resources. However, requesting the same resources will surely execute the job successfully.
 
