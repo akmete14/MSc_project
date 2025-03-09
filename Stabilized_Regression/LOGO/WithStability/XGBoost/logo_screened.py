@@ -65,9 +65,9 @@ temp_model.fit(X_train_screen_scaled, y_train_screen)
 importance = temp_model.feature_importances_
 feature_importance = dict(zip(initial_feature_columns, importance))
 sorted_features = sorted(feature_importance, key=feature_importance.get, reverse=True)
-top_k = 7
+top_k = 6
 selected_features = sorted_features[:top_k]
-print("Selected features after screening (top 7):", selected_features)
+print("Selected features after screening (top 6):", selected_features)
 
 # Update feature_columns to only include selected features.
 feature_columns = list(selected_features)
@@ -161,7 +161,7 @@ print("For test cluster", test_cluster, "G_hat count:", len(G_hat))
 
 # Compute the prediction scores only for subsets in G_hat.
 ghat_pred_scores = [score for subset, score in zip(all_subsets, pred_scores_all) if subset in G_hat]
-alpha_pred = 0.05  # keep the top 5% based on prediction score
+alpha_pred = 0.1  # keep the top 10% based on prediction score
 c_pred = np.quantile(ghat_pred_scores, 1 - alpha_pred)
 
 # Now, select O_hat as the subsets in G_hat whose prediction score is >= c_pred.

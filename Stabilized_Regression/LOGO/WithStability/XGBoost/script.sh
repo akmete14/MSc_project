@@ -5,8 +5,8 @@
 #SBATCH --error=logs/logo_xgb_%A_%a.err
 #SBATCH --array=0-9
 #SBATCH --time=120:00:00
-#SBATCH --cpus-per-task=3
-#SBATCH --mem-per-cpu=40000
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=35840
 
 # Load modules and activate venv
 module load stack/.2024-04-silent

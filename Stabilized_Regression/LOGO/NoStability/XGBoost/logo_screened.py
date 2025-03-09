@@ -55,9 +55,9 @@ temp_model.fit(X_train_screen_scaled, y_train_screen)
 importance = temp_model.feature_importances_
 feature_importance = dict(zip(initial_feature_columns, importance))
 sorted_features = sorted(feature_importance, key=feature_importance.get, reverse=True)
-top_k = 7
+top_k = 6
 selected_features = sorted_features[:top_k]
-print("Selected features after XGBoost screening (top 7):", selected_features)
+print("Selected features after XGBoost screening (top 6):", selected_features)
 
 # Update feature_columns to only include selected features.
 feature_columns = list(selected_features)
@@ -124,7 +124,7 @@ for subset in tqdm(all_subsets, desc="Evaluating subsets (LOGO) on training site
     pred_scores_all.append(score)
 
 # Set threshold (alpha_pred) to select the top subsets.
-alpha_pred = 0.05  # e.g., top 5%
+alpha_pred = 0.1  # e.g., top 5%
 c_pred = np.quantile(pred_scores_all, 1 - alpha_pred)
 O_hat = [subset for subset, score in zip(all_subsets, pred_scores_all) if score >= c_pred]
 print("For test cluster", test_cluster, "O_hat count:", len(O_hat))

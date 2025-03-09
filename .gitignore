@@ -47,3 +47,7 @@ Stabilized_Regression/LOSO/WithStability/XGBoost/logs
 LR/In_Site/logs
 Stabilized_Regression/In_Site/NoStability/XGBoost/logs
 XGBoost/InSite/logs
+filtered_50_sites.csv
+filtered_20_sites.csv
+filtered_10_sites.csv
+filtered_5_sites.csv
