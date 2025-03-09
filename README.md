@@ -1,12 +1,12 @@
-# Distribution Generalization in Dynamical Real-World Systems
-This git contains implementations of the following methods, applied to the FLUXNET dataset
+# FLUXNET benchmark
+This git contains implementations of the following methods
 1. Linear Regression (LR),
 2. Extreme Gradient Boosting (XGBoost),
 3. Long Short-Term Memory (LSTM),
 4. Invariant Risk Minimization (IRM),
 5. Stabilized Regression (SR with LR and XGB as underlying regressor).
 
-To reproduce the experiments, ensure that you have access to the FLUXNET data. Next, clone this repository. 
+To reproduce the experiments, ensure that you have access to the FLUXNET dataset. Next, clone this repository. 
 <!--
 In the main directory, create a folder called "Data" and copy the data into this folder. Due to the large amount of data, this can take some time. Make sure that the "Data" folder is listed in **.gitignore** to ensure that you don't upload large amounts of data when pushing changes to the repository.
 -->
