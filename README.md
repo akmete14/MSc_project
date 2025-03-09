@@ -1,5 +1,5 @@
 # Distribution Generalization in Dynamical Real-World Systems
-This git implements some pooling and domain generalization methods, applied to the FLUXNET dataset. The methods implemented are the following
+This git contains implementations of the following methods, applied to the FLUXNET dataset
 1. Linear Regression (LR),
 2. Extreme Gradient Boosting (XGBoost),
 3. Long Short-Term Memory (LSTM),
