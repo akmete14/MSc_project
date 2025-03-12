@@ -5,7 +5,7 @@
 #SBATCH --error=logs/logo_xgb_%A_%a.err
 #SBATCH --array=0-9
 #SBATCH --time=120:00:00
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=2
 #SBATCH --mem-per-cpu=35840
 
 # Load modules and activate venv

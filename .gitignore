@@ -28,15 +28,11 @@ LSTM/LOGO/logs
 Stabilized_Regression/LOGO/NoStability/LR/logs
 Stabilized_Regression/LOGO/NoStability/XGBoost/logs
 Stabilized_Regression/LOGO/WithStability/LR/logs
-CompareLOGO_XGB/
-Compare_SR/
 /LOGO/
 LOGO_XGB_vs_LSTM/
-LOGO_test/
 LOSO_XGBLSTM/
 XGBvsLSTM_OnSite/
 Stabilized_Regression/LOGO/WithStability/XGBoost/logs
-LSTM/old_scripts_and_results
 Stabilized_Regression/In_Site/NoStability/LR/logs
 Stabilized_Regression/LOSO/NoStability/LR/logs
 Stabilized_Regression/LOSO/WithStability/LR/logs
@@ -47,7 +43,3 @@ Stabilized_Regression/LOSO/WithStability/XGBoost/logs
 LR/In_Site/logs
 Stabilized_Regression/In_Site/NoStability/XGBoost/logs
 XGBoost/InSite/logs
-filtered_50_sites.csv
-filtered_20_sites.csv
-filtered_10_sites.csv
-filtered_5_sites.csv
