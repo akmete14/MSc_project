@@ -30,7 +30,6 @@ Stabilized_Regression/LOGO/NoStability/XGBoost/logs
 Stabilized_Regression/LOGO/WithStability/LR/logs
 LOGO_XGB_vs_LSTM/
 LOSO_XGBLSTM/
-XGBvsLSTM_OnSite/
 Stabilized_Regression/LOGO/WithStability/XGBoost/logs
 Stabilized_Regression/In_Site/NoStability/LR/logs
 Stabilized_Regression/LOSO/NoStability/LR/logs
@@ -43,3 +42,8 @@ LR/In_Site/logs
 Stabilized_Regression/In_Site/NoStability/XGBoost/logs
 XGBoost/InSite/logs
 IRM/LOSO/DE-Hai/de_hai_irm_predictions.csv
+LR/LOSO/DE_Hai/results_DE-Hai_linear.csv
+LSTM/LOSO/DE_Hai/results_DE-Hai_lstm.csv
+XGBoost/LOSO/DE_Hai/results_DE-Hai.csv
+XGBoost/InSite/DE_Hai/predictions_site_DE-Hai.csv
+XGBoost/InSite/DE_Hai/results_site_DE-Hai.csv
