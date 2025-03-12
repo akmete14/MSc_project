@@ -17,7 +17,7 @@ XGBoost/LOGO/balanced_grouping_weighted_training/logs
 XGBoost/LOGO/random_grouping/logs
 LSTM/InSite/logs
 LSTM/LOSO/logs
-IRM/OnSite/logs
+IRM/InSite/logs
 LSTM/LOSO/logs
 Stabilized_Regression/In_Site/WithStability/XGBoost/logs
 IRM/LOGO/LOGO_balanced_grouping/logs
