@@ -1,3 +1,4 @@
+# Import libraries
 import os
 import pandas as pd
 import numpy as np
@@ -9,11 +10,11 @@ from tqdm import tqdm
 # Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns with all NaN values
-df = df.fillna(0)
-# Drop unnecessary columns (adjust as needed)
+df = df.fillna(0) # get rid off NaN values if there are
+# Drop unnecessary columns
 df = df.drop(columns=['Unnamed: 0'])
 
-# Cast float64 columns to float32
+# Convert float64 to float32 to save memory
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
@@ -21,6 +22,7 @@ for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting col
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id', 'cluster']]
 target_column = "GPP"
 
+# If we want to parallelize, then SLURM setup, otherwise sequential execution
 # --- SLURM Parallelization Setup ---
 # Use SLURM_ARRAY_TASK_ID to process one cluster per job.
 if 'SLURM_ARRAY_TASK_ID' in os.environ:
@@ -34,22 +36,24 @@ else:
 
 results = {}
 
+# Define for loop for LOGO CV
 for cluster in tqdm(clusters_to_process, desc="Processing LOGO clusters"):
-    # For LOGO, training data is all rows not in the held-out cluster.
+    # Define train and test cluster for this fold
     df_train = df[df['cluster'] != cluster].copy()
     df_test  = df[df['cluster'] == cluster].copy()
     
-    # --- Scaling features ---
+    # Scale feature matrix X
     scaler_X = MinMaxScaler()
     X_train = df_train[feature_columns]
     X_test  = df_test[feature_columns]
     X_train_scaled = scaler_X.fit_transform(X_train)
     X_test_scaled  = scaler_X.transform(X_test)
     
-    # --- Scaling target ---
+    # get target
     y_train = df_train[target_column]
     y_test  = df_test[target_column]
     
+    # scale target
     y_train_min = y_train.min()
     y_train_max = y_train.max()
     if y_train_max - y_train_min == 0:
@@ -64,7 +68,7 @@ for cluster in tqdm(clusters_to_process, desc="Processing LOGO clusters"):
     X_test_scaled  = np.asarray(X_test_scaled, dtype=np.float32)
     y_train_scaled = np.asarray(y_train_scaled, dtype=np.float32)
     
-    # --- Model Training ---
+    # Define and train model
     model = XGBRegressor(objective='reg:squarederror',
                          n_estimators=100,
                          max_depth=5,
@@ -73,7 +77,7 @@ for cluster in tqdm(clusters_to_process, desc="Processing LOGO clusters"):
                          n_jobs=-1)
     model.fit(X_train_scaled, y_train_scaled)
     
-    # --- Prediction and Metrics ---
+    # make prediction and calculate metrics
     y_pred = model.predict(X_test_scaled)
     mse = mean_squared_error(y_test_scaled, y_pred)
     r2  = r2_score(y_test_scaled, y_pred)
@@ -83,6 +87,7 @@ for cluster in tqdm(clusters_to_process, desc="Processing LOGO clusters"):
     
     print(f"LOGO - Held-out Cluster {cluster}: MSE={mse:.6f}, R2={r2:.6f}, RMSE={rmse:.6f}, RelError={relative_error:.6f}, MAE={mae:.6f}")
     
+    # save results into dataframe
     results[cluster] = {
         'model': model,
         'mse': mse,
@@ -92,7 +97,7 @@ for cluster in tqdm(clusters_to_process, desc="Processing LOGO clusters"):
         'mae': mae
     }
 
-# --- Save Results ---
+# save results into csv
 if 'SLURM_ARRAY_TASK_ID' in os.environ:
     output_filename = f"results_LOGO_{clusters_to_process[0]}.csv"
     results_df = pd.DataFrame([{'cluster': cluster,
