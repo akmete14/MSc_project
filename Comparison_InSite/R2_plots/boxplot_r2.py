@@ -5,8 +5,8 @@ import seaborn as sns
 # Load datasets
 df_xgb = pd.read_csv('/cluster/project/math/akmete/MSc/XGBoost/InSite/results_2.csv')
 df_lstm = pd.read_csv('/cluster/project/math/akmete/MSc/LSTM/InSite/results_modified.csv')
-df_irm = pd.read_csv('/cluster/project/math/akmete/MSc/IRM/OnSite/results_corrected.csv')
-df_lr = pd.read_csv('/cluster/project/math/akmete/MSc/LR/In_Site/results_2.csv')
+df_irm = pd.read_csv('/cluster/project/math/akmete/MSc/IRM/InSite/results_corrected.csv')
+df_lr = pd.read_csv('/cluster/project/math/akmete/MSc/LR/InSite/results_2.csv')
 
 # Standardize column names
 # Standardize column names
@@ -26,9 +26,9 @@ df_xgb = df_xgb[['Model', 'r2']]
 df_lstm = df_lstm[['Model', 'r2']]
 df_irm = df_irm[['Model', 'r2']]
 
-# Function to remove extreme outliers using the 99% quantile
+# Function to remove extreme outliers using the 80% quantile
 def remove_upper_outliers(df, column='r2'):
-    Q01 = df[column].quantile(0.2)  # 99th percentile
+    Q01 = df[column].quantile(0.12)  # 88th percentile
     return df[df[column] >= Q01]  # Keep values below this threshold
 
 
