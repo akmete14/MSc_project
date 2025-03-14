@@ -134,15 +134,3 @@ source ~/venv/bin/activate
 # Run your command here
 python path/to/your/script.py
 ```
-To create a shell file, just enter
-```sh
-$ vim script.sh
-```
-After writing the shell file, make it executable by typing
-```sh
-$ chmod +x script.sh
-```
-Finally, the job can be submitted by entering
-```sh
-$ sbatch script.sh
-```
