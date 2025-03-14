@@ -125,7 +125,7 @@ The shell files are important when you work on clusters which require scheduling
 #SBATCH --time=01:00:00           # Time limit hh:mm:ss (max 120:00:00)
 #SBATCH --ntasks=1                # Number of tasks
 #SBATCH --cpus-per-task=4         # CPU cores per task
-#SBATCH --mem-per-cpu=1024                  # Memory per cpu
+#SBATCH --mem-per-cpu=1024        # Memory per cpu
 
 # Load modules and activate venv
 module load python/3.8
