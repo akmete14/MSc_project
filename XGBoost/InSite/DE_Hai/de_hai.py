@@ -1,3 +1,4 @@
+# Import libraries
 import os
 import pandas as pd
 import numpy as np
@@ -9,9 +10,10 @@ from tqdm import tqdm
 # Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
+df = df.fillna(0) # place 0 where NaN if there are any
 df = df.drop(columns=['Unnamed: 0', 'cluster'])  # Drop unnecessary columns
 
+# Convert float64 to float32 to save memory
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
@@ -19,10 +21,11 @@ for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting col
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
+# initialize list for results and predictions saving
 results = {}
 predictions_list = []
 
-# Process only the site 'DE-Hai'
+# Only interested in DE-Hai site for plots in thesis
 target_site = 'DE-Hai'
 sites_to_process = [target_site]
 
@@ -30,8 +33,6 @@ sites_to_process = [target_site]
 for site in sites_to_process:
     group = df[df['site_id'] == site].copy()
     
-    # (Optional) Sort chronologically if you have a date column:
-    # group = group.sort_values('date_column')
     
     # Perform an 80/20 chronological split
     n_train = int(len(group) * 0.8)
@@ -44,12 +45,12 @@ for site in sites_to_process:
     X_test  = test[feature_columns]
     y_test  = test[target_column]
     
-    # Scale features using MinMaxScaler (fit on training data)
+    # Scale features X
     scaler_X = MinMaxScaler()
     X_train_scaled = scaler_X.fit_transform(X_train)
     X_test_scaled  = scaler_X.transform(X_test)
     
-    # Scale target based on training data values
+    # Scale target y
     y_train_min = y_train.min()
     y_train_max = y_train.max()
     if y_train_max - y_train_min == 0:
@@ -59,7 +60,7 @@ for site in sites_to_process:
         y_train_scaled = (y_train - y_train_min) / (y_train_max - y_train_min)
         y_test_scaled  = (y_test - y_train_min) / (y_train_max - y_train_min)
     
-    # Also compute standardized target (using training statistics) for model training
+    # Scale test target
     y_train_standard = (y_train - y_train.min()) / (y_train.max() - y_train.min())
     y_test_standard  = (y_test - y_train.min()) / (y_train.max() - y_train.min())
     
@@ -68,7 +69,7 @@ for site in sites_to_process:
     X_test_scaled = np.asarray(X_test_scaled, dtype=np.float32)
     y_train_standard = np.asarray(y_train_standard, dtype=np.float32)
     
-    # Define and train the XGBoost model
+    # Define and train model
     model = XGBRegressor(objective='reg:squarederror',
                          n_estimators=100,
                          max_depth=5,
@@ -76,10 +77,10 @@ for site in sites_to_process:
                          random_state=0)
     model.fit(X_train_scaled, y_train_standard)
     
-    # Make predictions on the test data
+    # Make predictions
     y_pred = model.predict(X_test_scaled)
     
-    # Calculate performance metrics
+    # Calculate metrics
     mse = mean_squared_error(y_test_standard, y_pred)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test_standard, y_pred)
@@ -88,7 +89,7 @@ for site in sites_to_process:
     
     print(f"Site {site}: MSE={mse:.6f}, R2={r2:.6f}, RelError={relative_error:.6f}, MAE={mae:.6f}, RMSE={rmse:.6f}")
     
-    # Store the model and performance metrics for the site
+    # Save results in list
     results[site] = {
         'model': model,
         'mse': mse,
@@ -98,11 +99,11 @@ for site in sites_to_process:
         'mae': mae
     }
     
-    # Save per-sample predictions for the site, with a method identifier "XGB"
+    # Save acutal values and predictions
     site_predictions = pd.DataFrame({
         'site': site,
         'method': 'XGB',
-        'actual': y_test_standard,    # Standardized actual target values
+        'actual': y_test_standard,
         'predicted': y_pred
     })
     predictions_list.append(site_predictions)
@@ -110,7 +111,7 @@ for site in sites_to_process:
 # Combine predictions into a single DataFrame
 predictions_df = pd.concat(predictions_list, ignore_index=True)
 
-# Save the overall performance metrics and predictions to CSV files
+# Save performance metrics and predictions to CSV files
 results_df = pd.DataFrame([{
     'site': site,
     'mse': res['mse'],
