@@ -1,3 +1,4 @@
+# Import necessary libraries
 import os
 import pandas as pd
 import numpy as np
@@ -9,18 +10,21 @@ from tqdm import tqdm
 # Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
+df = df.fillna(0) # If there are still NaNs, fill them with 0
 df = df.drop(columns=['Unnamed: 0', 'cluster'])  # Drop unnecessary columns
 
-for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
+# Convert float64 to float32 to save memory
+for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"): 
     df[col] = df[col].astype('float32')
 
 # Define features and target
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
+# Initialize result list
 results = {}
 
+#  If necessary, we can split the job to get results quicker
 # --- SLURM Parallelization Setup ---
 # If running as a SLURM job array, use SLURM_ARRAY_TASK_ID to process one site.
 if 'SLURM_ARRAY_TASK_ID' in os.environ:
@@ -31,42 +35,42 @@ else:
     # If not running as a job array, process all sites sequentially.
     sites_to_process = sorted(df['site_id'].unique())
 
+# Here we run cross-validation for each site
 for site in tqdm(sites_to_process, desc="Processing sites"):
-    # Select data for the current site
-    group = df[df['site_id'] == site].copy()
+    # Select data from the current site
+    group = df[df['site_id'] == site].copy() 
     
-    # Ensure the data is sorted chronologically; if you have a date column, sort by it.
-    # group = group.sort_values('date_column')  # Uncomment and adjust if needed.
+    # Since data is already ordered with respect to time, we do not need to do that here
     
     # Perform an 80/20 chronological split
     n_train = int(len(group) * 0.8)
     train = group.iloc[:n_train]
     test  = group.iloc[n_train:]
     
-    # Extract features and target
+    # Define train and test for feature matrix X and target y
     X_train = train[feature_columns]
     y_train = train[target_column]
     X_test  = test[feature_columns]
     y_test  = test[target_column]
     
-    # Scale features using MinMaxScaler (fit on training data)
+    # Scale training features using MinMax scaling and apply this scaler to scale the test features
     scaler_X = MinMaxScaler()
     X_train_scaled = scaler_X.fit_transform(X_train)
     X_test_scaled  = scaler_X.transform(X_test)
     
-    # Scale target based on training data values
+    # Manually define MinMax scaling of target using training data
     y_train_min = y_train.min()
     y_train_max = y_train.max()
-    if y_train_max - y_train_min == 0:
+    if y_train_max - y_train_min == 0: #ensure that we do not divide by zero
         y_train_scaled = y_train.values
         y_test_scaled  = y_test.values
     else:
         y_train_scaled = (y_train - y_train_min) / (y_train_max - y_train_min)
         y_test_scaled  = (y_test - y_train_min) / (y_train_max - y_train_min)
     
-    # Also compute standardized y (using training mean and range) if needed
-    y_train_standard = (y_train - y_train.mean()) / (y_train.max() - y_train.min())
-    y_test_standard  = (y_test - y_train.mean()) / (y_train.max() - y_train.min())
+    # Apply scaler from train target to test target
+    y_train_standard = (y_train - y_train.min()) / (y_train.max() - y_train.min())
+    y_test_standard  = (y_test - y_train.min()) / (y_train.max() - y_train.min())
     
     # Ensure proper formatting (float32 arrays)
     X_train_scaled = np.asarray(X_train_scaled, dtype=np.float32)
@@ -96,7 +100,8 @@ for site in tqdm(sites_to_process, desc="Processing sites"):
     # Store the model and performance metrics for the site
     results[site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2_score': r2, 'relative_error': relative_error, 'mae': mae}
 
-# Save the results as CSV.
+
+# Save the results as CSV (only relevant when parallelizing using SLURM)
 if 'SLURM_ARRAY_TASK_ID' in os.environ:
     output_filename = f"results_site_{sites_to_process[0]}.csv"
     results_df = pd.DataFrame([{'site': site,
