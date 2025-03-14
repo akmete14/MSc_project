@@ -1,3 +1,4 @@
+#Import libraries
 import os
 import pandas as pd
 import numpy as np
@@ -8,15 +9,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
 
-# -----------------------------
-# 1) Load and Preprocess Data
-# -----------------------------
+# Load and process data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-df = df.drop(columns=['Unnamed: 0', 'cluster'])
+df = df.fillna(0) # fill NaN with 0 if there are any left
+df = df.drop(columns=['Unnamed: 0', 'cluster']) # drop unnecessary columns
 
-# Cast float64 columns to float32 for efficiency
+# Convert float64 to float32 to save memory
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
@@ -24,24 +23,19 @@ for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting col
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
-# -----------------------------
-# 2) Define the 'DE-Hai' Fold
-# -----------------------------
+# select the site we want to test predict on
 test_site = 'DE-Hai'
 df_train = df[df['site_id'] != test_site].copy()
 df_test  = df[df['site_id'] == test_site].copy()
 
-# -----------------------------
-# 3) Scaling
-# -----------------------------
-# Scale features based on training data only
+# Scale features X
 scaler_X = MinMaxScaler()
 X_train = df_train[feature_columns]
 X_test  = df_test[feature_columns]
 X_train_scaled = scaler_X.fit_transform(X_train)
 X_test_scaled  = scaler_X.transform(X_test)
 
-# Scale target based on training data values
+# Define and scale target y
 y_train = df_train[target_column]
 y_test  = df_test[target_column]
 
@@ -60,9 +54,7 @@ X_train_scaled = np.asarray(X_train_scaled, dtype=np.float32)
 X_test_scaled  = np.asarray(X_test_scaled, dtype=np.float32)
 y_train_scaled = np.asarray(y_train_scaled, dtype=np.float32)
 
-# -----------------------------
-# 4) Train the XGBoost Model
-# -----------------------------
+# Define and train model
 model = XGBRegressor(objective='reg:squarederror',
                      n_estimators=100,
                      max_depth=5,
@@ -70,9 +62,7 @@ model = XGBRegressor(objective='reg:squarederror',
                      random_state=42)
 model.fit(X_train_scaled, y_train_scaled)
 
-# -----------------------------
-# 5) Prediction and Metrics
-# -----------------------------
+# get prediction and calculate metrics
 y_pred = model.predict(X_test_scaled)
 
 mse = mean_squared_error(y_test_scaled, y_pred)
@@ -83,9 +73,7 @@ mae = np.mean(np.abs(y_test_scaled - y_pred))
 
 print(f"Test Site {test_site}: MSE={mse:.6f}, R2={r2:.6f}, RMSE={rmse:.6f}, RelError={relative_error:.6f}, MAE={mae:.6f}")
 
-# -----------------------------
-# 6) Save Actual and Predicted Values
-# -----------------------------
+# Save results to csv
 results_df = pd.DataFrame({
     'actual': y_test_scaled,
     'predicted': y_pred
@@ -93,22 +81,19 @@ results_df = pd.DataFrame({
 results_df.to_csv("results_DE-Hai.csv", index=False)
 print("Results saved to results_DE-Hai.csv")
 
-# -----------------------------
-# 7) Joint Scatter Plot with Marginal Histograms
-# -----------------------------
-# Extract the actual and predicted values
+# get actual and predicted values to make plots later
 y_test_standard = results_df["actual"]
 y_pred_values = results_df["predicted"]
 
-# Create the joint scatter plot with histograms on the margins
+# get scatter plot of actual vs predicted for thesis plots with histograms
 g = sns.jointplot(x=y_test_standard, y=y_pred_values, kind="scatter", s=1)
 
-# Add the y=x reference line
+# Add line corresponding to perfect prediction
 plt.plot([0.0, 1.0], [0.0, 1.0], color="red")
 
-# Set axis labels
+# Set labels of axis
 plt.xlabel("True GPP")
 plt.ylabel("Predicted GPP")
 
-# Save the plot to a file and display it
+# Save plot
 plt.savefig('de_hai_xgb.png')
