@@ -8,23 +8,21 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tqdm import tqdm
 
-# -----------------------
-# Load and Preprocess Data
-# -----------------------
+# Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-df = df.drop(columns=['Unnamed: 0', 'cluster'])
+df = df.fillna(0) # fill NaN with zero if there are any
+df = df.drop(columns=['Unnamed: 0', 'cluster']) # Drop unnecessary columns
+
+# Convert float64 to float32
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
-# Define features and target (as specified)
+# Define feature and target columns
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
-# -----------------------
-# Create a generator to yield sequence batches
-# -----------------------
+# Define generator function
 def sequence_generator(X, y, seq_len=10, batch_size=32):
     """
     Yields batches of sequences for X and corresponding targets for y.
@@ -42,9 +40,7 @@ def sequence_generator(X, y, seq_len=10, batch_size=32):
                 y_batch.append(y[j+seq_len])
             yield np.array(X_batch), np.array(y_batch)
 
-# -----------------------
-# Create Sequences Function for testing (if needed in full memory)
-# -----------------------
+# Define sequencing function
 def create_sequences(X, y, seq_len=10):
     """
     Build sequences of shape (num_sequences, seq_len, num_features) for X
@@ -58,17 +54,13 @@ def create_sequences(X, y, seq_len=10):
         y_seq.append(y[i+seq_len])
     return np.array(X_seq), np.array(y_seq)
 
-# -----------------------
-# Define output file for results
-# -----------------------
+# Define where to save the results
 output_file = 'results_LOSO_modified.csv'
 if not os.path.exists(output_file):
     with open(output_file, 'w') as f:
         f.write("site,test_loss,mse,r2,relative_error,mae,rmse\n")
 
-# -----------------------
-# Get unique sites based on 'site_id'
-# -----------------------
+# Get all unique sitenames
 sites = sorted(df['site_id'].unique())
 
 # Use SLURM_ARRAY_TASK_ID (if available) to process a single site; otherwise, process all.
@@ -78,15 +70,14 @@ if 'SLURM_ARRAY_TASK_ID' in os.environ:
 else:
     sites_to_process = sites
 
-# -----------------------
-# LOSO: Process each held-out site
-# -----------------------
+# Define LSTM network parameters
 seq_len = 10
 batch_size = 32
 
+# Define LOSO cross-validation
 for site in tqdm(sites_to_process, desc="Processing LOSO sites"):
     print(f"Processing held-out site: {site}")
-    # LOSO: training = all rows NOT from held-out site; test = rows from held-out site.
+    # Define train and test for this fold
     df_train = df[df['site_id'] != site].copy()
     df_test  = df[df['site_id'] == site].copy()
     
@@ -116,16 +107,14 @@ for site in tqdm(sites_to_process, desc="Processing LOSO sites"):
     print(f"Site {site}: Training steps per epoch: {steps_per_epoch}")
     print(f"Site {site}: X_test_seq shape: {X_test_seq.shape}, y_test_seq shape: {y_test_seq.shape}")
     
-    # -----------------------
-    # Build LSTM Model
-    # -----------------------
+    # Define LSTM network
     model = Sequential()
     model.add(LSTM(64, input_shape=(seq_len, X_train_scaled.shape[1])))
     model.add(Dense(1))  # single-output regression
     model.compile(optimizer='adam', loss='mse')
     model.summary()
     
-    # Train the model using generator
+    # Train model
     history = model.fit(
         train_gen,
         steps_per_epoch=steps_per_epoch,
@@ -134,7 +123,7 @@ for site in tqdm(sites_to_process, desc="Processing LOSO sites"):
         verbose=0
     )
     
-    # Evaluate on the test set (loss is MSE in the scaled domain)
+    # Evaluate model
     test_loss = model.evaluate(X_test_seq, y_test_seq, verbose=0)
     
     # Get predictions and compute additional metrics
