@@ -1,23 +1,14 @@
+# Import libraries
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.pipeline import Pipeline
-from sklearn.compose import TransformedTargetRegressor
-from sklearn.preprocessing import MinMaxScaler
 import os
 import xarray as xr
-from sklearn.impute import SimpleImputer
-from sklearn.cluster import KMeans
-# from joblib import Parallel, delayed
-from xgboost import XGBRegressor
-from lightgbm import LGBMRegressor
 from tqdm import tqdm
 
-path = '/cluster/project/math/akmete/MSc/Data/' #'/cluster/project/math/akmete/MSc/Data'
-files = [f for f in os.listdir(path) if f.endswith('.nc')]
-files.sort()
-assert len(files) % 3 == 0
+path = '/cluster/project/math/akmete/MSc/Data/' # Define the path to the uploaded data, which is in the main directory in 'Data'
+files = [f for f in os.listdir(path) if f.endswith('.nc')] # get all files in this folder
+files.sort() # sort them (if they aren't already)
+assert len(files) % 3 == 0 # each 3 files belong to one site, so group them
 files = {files[0 + 3 * i][:6]: (files[0 + 3 * i], files[1 + 3 * i], files[2 + 3 * i]) for i in range(len(files) // 3)}
 sites = list(files.keys())
 
@@ -34,7 +25,7 @@ def extract_good_quality(df):
 
     # Function to initialize and clean the dataframe
 def initialize_dataframe(file1, file2, file3, path):
-    # Open data
+    # Open data and only keep variables we want
     ds = xr.open_dataset(path + file1, engine='netcdf4')
     ds = ds[['GPP','GPP_qc','longitude','latitude']]
     dr = xr.open_dataset(path + file2, engine='netcdf4')
@@ -51,7 +42,7 @@ def initialize_dataframe(file1, file2, file3, path):
     df_combined = pd.merge(df, df_meteo, on=['time'], how='outer')
     df_combined = pd.merge(df_combined, df_rs, on=['time'], how='outer')
 
-    # Handle longitude and latitude duplication
+    # Handle longitude and latitude duplication (duplicates when we merge)
     if 'longitude_x' in df_combined.columns and 'latitude_x' in df_combined.columns:
         df_combined['longitude'] = df_combined['longitude_x']  # Choose longitude_x
         df_combined['latitude'] = df_combined['latitude_x']  # Choose latitude_x
@@ -79,7 +70,6 @@ def initialize_dataframe(file1, file2, file3, path):
     df_combined = df_combined.reset_index(drop=True)
 
     # Handle categorical variables
-    # Handle categorical variables
     string_column = 'IGBP_veg_short'
     if string_column in df_combined.columns:
         from sklearn.preprocessing import LabelEncoder
@@ -88,7 +78,7 @@ def initialize_dataframe(file1, file2, file3, path):
         df_combined[string_column] = le.fit_transform(df_combined[string_column])
 
 
-    # Drop quality control columns
+    # Drop quality control columns (not needed anymore)
     columns_to_drop = df_combined.filter(regex='_qc$').columns
     df_clean = df_combined.drop(columns=columns_to_drop)
 
@@ -97,11 +87,12 @@ def initialize_dataframe(file1, file2, file3, path):
                                        'WWP', 'SNDPPT', 'SLTPPT', 'PHIKCL', 'PHIHOX', 'ORCDRC', 'CRFVOL', 'CLYPPT', 'CECSOL', 
                                        'BLDFIE', 'AWCtS', 'AWCh3', 'AWCh2', 'AWCh1', 'latitude', 'longitude', 'x', 'y', 'x_x', 'y_x', 'x_y', 'y_y'], errors='ignore')
 
-    # Sample 5% of the data
+    # Sample 5% of the data (if considering subsampling as an option)
     #df_clean = df_clean.sample(frac=sample_fraction, random_state=42).reset_index(drop=True)
 
     return df_clean
 
+# Add grouping to the clean dataframe (grouping defined as BalancedGrouping algorithm in thesis)
 dg = pd.read_csv('grouping_equal_size(1).csv')
 dg = dg.drop(columns=['longitude', 'latitude','Unnamed: 0'])
 dg.index = dg['site']
