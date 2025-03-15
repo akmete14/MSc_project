@@ -1,3 +1,4 @@
+# Import libraries
 import os
 import pandas as pd
 import numpy as np
@@ -9,16 +10,18 @@ from tqdm import tqdm
 # Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-df = df.drop(columns=['Unnamed: 0', 'cluster'])
+df = df.fillna(0) # fill any remaining NaNs with 0
+df = df.drop(columns=['Unnamed: 0', 'cluster']) # drop unnecessary columns
+
+# Convert float64 to float32 to save resources
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
-# Define features and target
+# Define features and target variable
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
-# Get sorted unique sites
+# Get all sitenames and sort them alphabetically
 unique_sites = sorted(df['site_id'].unique())
 
 # Check for SLURM array task ID to select one left-out site for this job
@@ -30,29 +33,27 @@ else:
     # If not running as an array job, process all folds sequentially
     sites_to_process = unique_sites
 
+# Initialize results list to save results later
 results = {}
 
+# Define LOSO cross-validation loop
 for test_site in sites_to_process:
-    # Define train (all sites except test_site) and test (only test_site)
+    # For this fold, define train and test set respectively
     train = df[df['site_id'] != test_site]
     test  = df[df['site_id'] == test_site]
     
-    # (Optional) If you need to sort by time, do it here.
-    # train = train.sort_values('date_column')
-    # test = test.sort_values('date_column')
-    
-    # Extract features and target variables
+    # Extract features and target variable
     X_train = train[feature_columns]
     y_train = train[target_column]
     X_test  = test[feature_columns]
     y_test  = test[target_column]
     
-    # Scale features using MinMaxScaler (fit on training data)
+    # Scale train features using MinMax scaling and scale test featuers using this scaler
     scaler_X = MinMaxScaler()
     X_train_scaled = scaler_X.fit_transform(X_train)
     X_test_scaled  = scaler_X.transform(X_test)
     
-    # Scale target variable based on training data values
+    # Scale train target variable and apply scaling statistics form train to test target
     y_train_min = y_train.min()
     y_train_max = y_train.max()
     if y_train_max - y_train_min == 0:
@@ -62,11 +63,11 @@ for test_site in sites_to_process:
         y_train_scaled = (y_train - y_train_min) / (y_train_max - y_train_min)
         y_test_scaled  = (y_test - y_train_min) / (y_train_max - y_train_min)
     
-    # Train a linear regression model on the scaled training data
+    # Define and fit model
     model = LinearRegression()
     model.fit(X_train_scaled, y_train_scaled)
     
-    # Evaluate the model on the scaled test data
+    # Get predictions and metrics
     y_pred_scaled = model.predict(X_test_scaled)
     mse = mean_squared_error(y_test_scaled, y_pred_scaled)
     rmse = np.sqrt(mse)
@@ -74,7 +75,7 @@ for test_site in sites_to_process:
     relative_error = np.mean(np.abs(y_test_scaled - y_pred_scaled) / np.abs(y_test_scaled))
     mae = np.mean(np.abs(y_test_scaled - y_pred_scaled))
     
-    # Store the model and performance metrics for the left-out site
+    # Store the metrics in the list
     results[test_site] = {'model': model, 'mse': mse, 'rmse': rmse, 'r2': r2, 'relative_error': relative_error, 'mae': mae}
     print(f"Left out site {test_site}: MSE = {mse:.4f}, RMSE = {rmse:.4f}, R2 = {r2:.4f}")
 
