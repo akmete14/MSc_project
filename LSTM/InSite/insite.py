@@ -56,9 +56,9 @@ if 'SLURM_ARRAY_TASK_ID' in os.environ:
 else:
     sites_to_process = sites
 
-# LOSO cross-validation for each site
+# process DE-Hai site
 for site in tqdm(sites_to_process, desc="Processing sites"):
-    # Get train and test depending on the fold
+    # read in the data to a csv of this particular site
     df_site = df[df['site_id'] == site].copy()
     print(f"Processing site {site}: shape {df_site.shape}")
     
