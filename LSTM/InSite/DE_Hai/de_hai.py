@@ -1,3 +1,4 @@
+# Import libraries
 import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
@@ -8,23 +9,21 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tqdm import tqdm
 
-# -----------------------
-# Load and Preprocess Data
-# -----------------------
+# Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-df = df.drop(columns=['Unnamed: 0','cluster'])
+df = df.fillna(0) # Set NaN to zero if there are any
+df = df.drop(columns=['Unnamed: 0','cluster']) # dorp unnecessary rows
+
+# Convert float64 to float32 to save resources
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
-# Define features and target
+# Define feature and target columns
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
-# -----------------------
-# Create Sequences Function
-# -----------------------
+# Define sequencing function
 def create_sequences(X, y, seq_len=10):
     """
     Build sequences of shape (num_sequences, seq_len, num_features) for X
@@ -41,9 +40,7 @@ def create_sequences(X, y, seq_len=10):
         y_seq.append(y[i+seq_len])
     return np.array(X_seq), np.array(y_seq)
 
-# -----------------------
-# Process only the site 'DE-Hai'
-# -----------------------
+# Only process DE-Hai (for plots in thesis)
 target_site = "DE-Hai"
 df_site = df[df['site_id'] == target_site].copy()
 print(f"Processing site {target_site}: shape {df_site.shape}")
@@ -80,9 +77,7 @@ X_test_seq,  y_test_seq  = create_sequences(X_test_scaled,  y_test_standard, seq
 print(f"Site {target_site}: X_train_seq shape: {X_train_seq.shape}, y_train_seq shape: {y_train_seq.shape}")
 print(f"Site {target_site}: X_test_seq shape: {X_test_seq.shape}, y_test_seq shape: {y_test_seq.shape}")
 
-# -----------------------
-# Build and Train LSTM Model
-# -----------------------
+# Build LSTM network
 model = Sequential()
 model.add(LSTM(64, input_shape=(seq_len, X_train_seq.shape[2])))
 model.add(Dense(1))  # Single-output regression
@@ -98,10 +93,10 @@ history = model.fit(
     verbose=0
 )
 
-# Evaluate on the test set
+# Evaluate model on test set
 test_loss = model.evaluate(X_test_seq, y_test_seq, verbose=0)
 
-# Get predictions and compute additional metrics
+# Get predictions and metrics
 y_pred = model.predict(X_test_seq).flatten()
 mse = mean_squared_error(y_test_seq, y_pred)
 r2 = r2_score(y_test_seq, y_pred)
@@ -111,10 +106,7 @@ rmse = np.sqrt(mse)
 
 print(f"Metrics for site {target_site}: Loss={test_loss:.6f}, MSE={mse:.6f}, R2={r2:.6f}, Relative Error={relative_error:.6f}, MAE={mae:.6f}, RMSE={rmse:.6f}")
 
-# -----------------------
-# Save Results and Predictions
-# -----------------------
-# Save overall performance metrics to a CSV file
+# Save results into csv file
 results_df = pd.DataFrame({
     'site': [target_site],
     'test_loss': [test_loss],
@@ -128,7 +120,7 @@ results_filename = f"results_{target_site}.csv"
 results_df.to_csv(results_filename, index=False)
 print(f"Overall results saved to {results_filename}")
 
-# Save per-sample predictions to a CSV file (for overlayed scatter plot later)
+# Save predictions and actual data (for scatter plot for thesis)
 predictions_df = pd.DataFrame({
     'site': target_site,
     'method': 'LSTM',
