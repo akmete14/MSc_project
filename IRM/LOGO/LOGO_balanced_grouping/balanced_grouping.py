@@ -1,5 +1,4 @@
-### LOGO with balanced grouping ###
-
+# Import libraries
 import pandas as pd
 import torch
 from torch.autograd import grad
@@ -8,18 +7,13 @@ import numpy as np
 import os
 from tqdm import tqdm
 
-print("modules and torch imported")
-
-############################
-### MAKE DATAFRAME READY ###
-############################
-
-# Read the CSV file into a DataFrame and drop not necessariy column 'Unnamed: 0'
+# Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-df = df.drop(columns=['Unnamed: 0'])
+df = df.fillna(0) # fill NaNs with zeros if there are any
+df = df.drop(columns=['Unnamed: 0']) # drop unnecessary columns
 
+# Convert float64 to float32 to save resources
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
@@ -43,15 +37,9 @@ for cluster, cluster_df in df.groupby('cluster'):
     environments_by_cluster[cluster] = site_envs
 
 
-################################
-### DEFINE SCALING FUNCTIONS ###
-################################
-
+# Define function for calculating global statistics for scaling
 def compute_global_scaling_stats(environments):
-    """
-    Given a list of environments (tuples of tensors: (X, y)), computes the global
-    minimum and maximum for the features and target across all environments.
-    """
+
     # Concatenate all X and y from the environments
     X_all = torch.cat([env[0] for env in environments], dim=0)
     y_all = torch.cat([env[1] for env in environments], dim=0)
@@ -71,30 +59,28 @@ def compute_global_scaling_stats(environments):
         "max_y": global_max_y,
     }
 
+# Given statistics for scaling, define scaling funciton
 def scale_environment_global(environment, global_stats):
-    """
-    Scales a single environment (tuple of tensors: (X, y)) using the provided
-    global statistics.
-    """
+
+    # Define scaling statistics (we scale golabbly, that is after splitting to train and test,
+    # we use one scaler for all sites in the train set)
     x, y = environment
     min_x = global_stats["min_x"]
     max_x = global_stats["max_x"]
     min_y = global_stats["min_y"]
     max_y = global_stats["max_y"]
     
-    # Avoid division by zero for features
+    # Avoid division by zero
     diff_x = max_x - min_x
     diff_x[diff_x == 0] = 1.0
 
+    #  Scale target and feature
     scaled_x = (x - min_x) / diff_x
     scaled_y = (y - min_y) / (max_y - min_y + 1e-8)
     
     return (scaled_x, scaled_y)
 
-#####################
-### USE IRM CLASS ###
-#####################
-
+# Define IRM class (adapted from https://github.com/facebookresearch/DomainBed)
 class IRM:
     def __init__(self, environments, args):
         best_reg = 0
@@ -172,22 +158,19 @@ class IRM:
         return (self.phi @ self.w).view(-1, 1)
 
 
-################
-### LOEO-CV  ###
-################
-
 # Define training parameters
 args = {
     "lr": 0.01,
     "n_iterations": 1000,
-    "verbose": False,  # Turn off verbose logging for cluster jobs
-    "early_stopping_patience": 100,  # stop if no improvement for 100 iterations
+    "verbose": False,  # Turn off verbose logging the jobs (otherwise lot of outputs)
+    "early_stopping_patience": 100,  # stop if there is no more improvement
     "early_stopping_min_delta": 1e-4
 }
 
 # Get list of cluster IDs
 cluster_ids = list(environments_by_cluster.keys())
 
+# Define cross-validation
 def run_fold(fold_cluster):
     # Collect training and test environments from clusters
     train_envs = []
@@ -213,10 +196,10 @@ def run_fold(fold_cluster):
     if not scaled_test_envs or len(scaled_test_envs) == 0:
         raise ValueError(f"After scaling, no test environments available for fold_cluster: {fold_cluster}")
     
-    # Train IRM on training environments (note: the IRM class uses the last env for validation)
+    # Train IRM model
     irm_model = IRM(scaled_train_envs, args)
     
-    # Combine test environments (sites) for evaluation
+    # Get test data and evaluate the model
     X_test = torch.cat([env[0] for env in scaled_test_envs], dim=0)
     y_test = torch.cat([env[1] for env in scaled_test_envs], dim=0)
     y_pred_scaled = X_test @ irm_model.solution()
@@ -233,7 +216,7 @@ def run_fold(fold_cluster):
     
     print(f"Cluster {fold_cluster}: Test MSE: {test_mse:.5f}, Test RMSE: {test_rmse:.5f}, R2 Score: {r2:.5f}, MAE: {mae:.5f}, Relative Error: {relative_error:.5f}")
     
-    # Save results to CSV (each fold gets its own file)
+    # Save results to csv (we receive for each fold one csv)
     results_df = pd.DataFrame([{
         'cluster': fold_cluster,
         'mse': test_mse,
@@ -248,6 +231,7 @@ def run_fold(fold_cluster):
 
 
 
+# Execute main function
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Run a single LOGO fold by cluster.")
     # You can either pass the actual cluster id or an index mapping to cluster_ids
@@ -255,4 +239,3 @@ if __name__ == '__main__':
     args_parsed = parser.parse_args()
     
     run_fold(args_parsed.fold_cluster)
-
