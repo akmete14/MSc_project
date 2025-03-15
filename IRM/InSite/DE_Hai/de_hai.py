@@ -1,3 +1,4 @@
+# Import libraries
 import pandas as pd
 import torch
 from torch.autograd import grad
@@ -5,32 +6,35 @@ import numpy as np
 import os
 from tqdm import tqdm
 
-print("Modules and torch imported.")
-
-# --- Define the scaling function ---
+# Define scaling function
 def scale_environments(train_environments, test_environments):
+    # For each environment, get train and test set
     train_x = torch.cat([env[0] for env in train_environments], dim=0)
     train_y = torch.cat([env[1] for env in train_environments], dim=0)
 
+    # For MinMax scaling, get statistics from the train features and train target
     min_x, _ = torch.min(train_x, dim=0)
     max_x, _ = torch.max(train_x, dim=0)
     min_y, _ = torch.min(train_y, dim=0)
     max_y, _ = torch.max(train_y, dim=0)
 
+    # Define scaling function for features
     def minmax_scale_x(x):
         diff = max_x - min_x
         diff[diff == 0] = 1  # Avoid division by zero
         return (x - min_x) / diff
 
+    # Define scaling function for target (and ensure not dividing by zero)
     def minmax_scale_y(y):
         return (y - min_y) / (max_y - min_y + 1e-8)
 
+    # Scale train and test sets
     scaled_train_envs = [(minmax_scale_x(x), minmax_scale_y(y)) for x, y in train_environments]
     scaled_test_envs = [(minmax_scale_x(x), minmax_scale_y(y)) for x, y in test_environments]
 
     return scaled_train_envs, scaled_test_envs
 
-# --- Define the IRM class ---
+# Define the IRM class (adapted from DomainBed (see https://github.com/facebookresearch/DomainBed))
 class IRM:
     def __init__(self, environments, args):
         best_reg = 0
@@ -76,28 +80,27 @@ class IRM:
     def solution(self):
         return (self.phi @ self.w).view(-1, 1)
 
-######################
-######## MAIN ########
-######################
-
+# Define main function
 def main():
-    # Hardcode the target site to 'DE-Hai'
+    # Choose site to be processed
     chosen_site = "DE-Hai"
     print("Processing site:", chosen_site)
     
     # Load full dataset and preprocess
     df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
-    df = df.dropna(axis=1, how='all')
-    df = df.fillna(0)
-    df = df.drop(columns=['Unnamed: 0', 'cluster'])
+    df = df.dropna(axis=1, how='all') # Drop columns where only NaNs (if there are)
+    df = df.fillna(0) # fill NaN with zeros
+    df = df.drop(columns=['Unnamed: 0', 'cluster']) # Drop unnecessary column
+
+    #Convert float64 to float32 to save resources
     for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
         df[col] = df[col].astype('float32')
 
-    # Define features and target
+    # Define features and target variable
     feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
     target_column = "GPP"
 
-    # Filter data for the chosen site
+    # Get only DE-Hai data from overall dataframe
     site_data = df[df['site_id'] == chosen_site].copy()
 
     # Perform an 80/20 chronological split
@@ -107,27 +110,28 @@ def main():
     test_df = site_data.iloc[split_idx:]
     print(f"Total samples: {n} | Training: {len(train_df)} | Testing: {len(test_df)}")
 
-    # Convert to PyTorch tensors
+    # Convert to PyTorch tensors (as needed for IRM class)
     X_train = torch.tensor(train_df[feature_columns].values, dtype=torch.float32)
     y_train = torch.tensor(train_df[target_column].values, dtype=torch.float32).view(-1, 1)
     X_test = torch.tensor(test_df[feature_columns].values, dtype=torch.float32)
     y_test = torch.tensor(test_df[target_column].values, dtype=torch.float32).view(-1, 1)
 
+    # Define train and test
     train_env = (X_train, y_train)
     test_env = (X_test, y_test)
 
-    # Scale the environments using the training data
+    # Scale train and test
     scaled_train_envs, scaled_test_envs = scale_environments([train_env], [test_env])
 
     # Set training parameters
     args_params = {"lr": 0.01, "n_iterations": 1000, "verbose": False}
 
-    # Train the IRM model on the combined environments (train + test)
+    # Train the IRM model
     irm_model = IRM(scaled_train_envs + scaled_test_envs, args_params)
     final_solution = irm_model.solution()
     print("Final learned solution:", final_solution.detach().numpy())
 
-    # Evaluate on the test environment
+    # Evaluate on test environment and get metrics
     x_test_scaled, y_test_scaled = scaled_test_envs[0]
     y_pred_scaled = x_test_scaled @ irm_model.solution()
 
@@ -141,7 +145,7 @@ def main():
 
     print("Test MSE:", mse, "RMSE:", rmse, "R2:", r2, "Relative Error:", relative_error, "MAE:", mae)
 
-    # Save overall results to a CSV file
+    # Save results to csv
     result = pd.DataFrame({
         'site_id': [chosen_site],
         'mse': [mse],
@@ -155,8 +159,7 @@ def main():
     result.to_csv(output_filename, index=False)
     print("Overall results saved to", output_filename)
 
-    # --- Save per-sample predictions ---
-    # Convert predictions and actual values to NumPy arrays
+    # get actual and predicted values, convert both to numpy arrays and save them ot a dataframe
     y_pred_np = y_pred_scaled.detach().cpu().numpy().flatten()
     y_test_np = y_test_scaled.detach().cpu().numpy().flatten()
 
@@ -170,5 +173,6 @@ def main():
     predictions_df.to_csv(predictions_filename, index=False)
     print("Predictions saved to", predictions_filename)
 
+# Calls the main function
 if __name__ == '__main__':
     main()
