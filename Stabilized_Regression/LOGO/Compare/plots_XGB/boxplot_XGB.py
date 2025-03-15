@@ -14,8 +14,8 @@ df_xgb_withstab = pd.read_csv('/cluster/project/math/akmete/MSc/Stabilized_Regre
 
 
 # Add labels to identify the datasets
-df_xgb_nostab['Stability'] = 'Screened & Pred-Filtered'
-df_xgb_withstab['Stability'] = 'Screened & Pred+Stab-Filtered'
+df_xgb_nostab['Stability'] = 'Pred'
+df_xgb_withstab['Stability'] = 'Pred+Stab'
 
 # Select relevant columns
 df_xgb_nostab = df_xgb_nostab[['test_cluster', 'ensemble_rmse_scaled', 'full_rmse_scaled', 'Stability']]
@@ -24,7 +24,7 @@ df_xgb_withstab = df_xgb_withstab[['test_cluster', 'ensemble_rmse_scaled', 'full
 # Create a third dataset for the full model RMSE (values are the same in both datasets)
 df_full_rmse = df_xgb_nostab[['test_cluster', 'full_rmse_scaled']].copy()
 df_full_rmse.rename(columns={'full_rmse_scaled': 'ensemble_rmse_scaled'}, inplace=True)
-df_full_rmse['Stability'] = 'Screened'
+df_full_rmse['Stability'] = 'Full'
 '''
 # Function to remove the top 1% outliers
 def filter_rmse_99(df, column='ensemble_rmse_scaled'):
@@ -40,7 +40,7 @@ df_full_rmse = filter_rmse_99(df_full_rmse, column='ensemble_rmse_scaled')
 df_combined_filtered = pd.concat([df_xgb_nostab, df_xgb_withstab, df_full_rmse], ignore_index=True)
 
 # Create a boxplot comparing RMSE scaled values across conditions after filtering
-plt.figure(figsize=(12, 7))
+plt.figure(figsize=(8, 6))
 sns.boxplot(x='Stability', y='ensemble_rmse_scaled', data=df_combined_filtered)
 plt.xlabel("Model Type")
 plt.ylabel("RMSE")

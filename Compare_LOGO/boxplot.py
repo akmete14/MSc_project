@@ -52,15 +52,15 @@ df_irm = remove_upper_outliers(df_irm)
 df_lr = remove_upper_outliers(df_lr)
 '''
 # Combine all datasets after removing outliers
-df_combined_filtered = pd.concat([df_xgb, df_lstm, df_irm, df_lr], ignore_index=True)
+df_combined_filtered = pd.concat([df_lr, df_xgb, df_lstm, df_irm], ignore_index=True)
 
 # Create a boxplot comparing RMSE for different models (after removing upper 5% outliers)
-plt.figure(figsize=(9, 7))
+plt.figure(figsize=(8, 6))
 sns.boxplot(x='model', y='rmse', data=df_combined_filtered)
 plt.xlabel("Model")
 plt.ylabel("RMSE")
 #plt.title("Comparison of RMSE Across Models (Without Upper 5% Outliers)")
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 
-
-plt.savefig('boxplot.png')
+plt.tight_layout()
+plt.savefig('boxplot.png', dpi=300)

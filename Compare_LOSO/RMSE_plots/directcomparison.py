@@ -49,7 +49,7 @@ df_selected = df_combined[df_combined['site'].isin(selected_sites)]
 # ===============================
 # 2. Plot RMSE trends across models for selected sites
 # ===============================
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(8, 6))
 
 # Define x-axis positions for the models, starting with LR
 models_order = ["LR", "XGBoost", "LSTM", "IRM"]
