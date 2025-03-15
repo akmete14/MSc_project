@@ -1,3 +1,4 @@
+# Import libraries
 import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
@@ -8,27 +9,21 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tqdm import tqdm
 
-# -----------------------
-# Load and Preprocess Data
-# -----------------------
+# Load and process dara
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-# Drop columns not needed for modeling (we drop "Unnamed: 0" but keep "cluster" for LOGO splitting)
-df = df.drop(columns=['Unnamed: 0'])
+df = df.fillna(0) # fill NaN with zero if there are any
+df = df.drop(columns=['Unnamed: 0']) # drop unnecessary columns
+
+# Convert float64 to float32
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
-# -----------------------
-# Define features and target
-# -----------------------
-# For modeling, we use all columns except "GPP", "site_id", and "cluster" as features.
+# Define feature and target columns
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id', 'cluster']]
 target_column = "GPP"
 
-# -----------------------
-# Create a generator to yield sequence batches (for training)
-# -----------------------
+# Define sequencing function
 def sequence_generator(X, y, seq_len=10, batch_size=32):
     """
     Yields batches of sequences for X and corresponding targets for y.
@@ -46,9 +41,7 @@ def sequence_generator(X, y, seq_len=10, batch_size=32):
                 y_batch.append(y[j+seq_len])
             yield np.array(X_batch), np.array(y_batch)
 
-# -----------------------
-# Create Sequences Function (for testing, full-memory)
-# -----------------------
+# Create sequencing by using function above
 def create_sequences(X, y, seq_len=10):
     """
     Build sequences of shape (num_sequences, seq_len, num_features) for X
@@ -62,18 +55,15 @@ def create_sequences(X, y, seq_len=10):
         y_seq.append(y[i+seq_len])
     return np.array(X_seq), np.array(y_seq)
 
-# -----------------------
-# Define output file for results
-# -----------------------
+# Define where to save the results
 output_file = 'results_LOGO_modified.csv'
 if not os.path.exists(output_file):
     with open(output_file, 'w') as f:
         f.write("cluster,test_loss,mse,r2,relative_error,mae,rmse\n")
 
-# -----------------------
-# Get unique clusters based on 'cluster'
-# -----------------------
+# Get all unique cluster names to define the for loop for LOGO later
 clusters = sorted(df['cluster'].unique())
+
 
 # Use SLURM_ARRAY_TASK_ID (if available) to process a single cluster; otherwise, process all.
 if 'SLURM_ARRAY_TASK_ID' in os.environ:
@@ -82,15 +72,14 @@ if 'SLURM_ARRAY_TASK_ID' in os.environ:
 else:
     clusters_to_process = clusters
 
-# -----------------------
-# LOGO: Process each held-out cluster
-# -----------------------
+# Define LSTM parameters
 seq_len = 10
 batch_size = 32
 
+# LOGO cross-validation
 for cluster in tqdm(clusters_to_process, desc="Processing LOGO clusters"):
     print(f"Processing held-out cluster: {cluster}")
-    # LOGO: Training data is all rows NOT from the held-out cluster; test data is from the held-out cluster.
+    # Define train and test for this fold
     df_train = df[df['cluster'] != cluster].copy()
     df_test  = df[df['cluster'] == cluster].copy()
     
@@ -119,16 +108,14 @@ for cluster in tqdm(clusters_to_process, desc="Processing LOGO clusters"):
     print(f"Cluster {cluster}: Training steps per epoch: {steps_per_epoch}")
     print(f"Cluster {cluster}: X_test_seq shape: {X_test_seq.shape}, y_test_seq shape: {y_test_seq.shape}")
     
-    # -----------------------
-    # Build LSTM Model
-    # -----------------------
+    # Define LSTM network
     model = Sequential()
     model.add(LSTM(64, input_shape=(seq_len, X_train_scaled.shape[1])))
     model.add(Dense(1))  # Single-output regression
     model.compile(optimizer='adam', loss='mse')
     model.summary()
     
-    # Train the model using the generator
+    # Train model
     history = model.fit(
         train_gen,
         steps_per_epoch=steps_per_epoch,
@@ -137,7 +124,7 @@ for cluster in tqdm(clusters_to_process, desc="Processing LOGO clusters"):
         verbose=0
     )
     
-    # Evaluate on the test set
+    # Evaluate model on test set
     test_loss = model.evaluate(X_test_seq, y_test_seq, verbose=0)
     
     # Get predictions and compute metrics
