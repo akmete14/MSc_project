@@ -1,3 +1,4 @@
+# Import libraries
 import pandas as pd
 import torch
 from torch.autograd import grad
@@ -7,19 +8,13 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-print("Modules and torch imported")
-
-############################
-### MAKE DATAFRAME READY ###
-############################
-
-# Read the CSV file and clean it
+# Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-df = df.drop(columns=['Unnamed: 0', 'cluster'])
+df = df.fillna(0) # fill 0 for NaN if there are any
+df = df.drop(columns=['Unnamed: 0', 'cluster']) # drop unnecessary clumns
 
-# Cast float64 columns to float32 for efficiency
+# Convert float64 to float32 to save resources
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
@@ -27,7 +22,7 @@ print(df.columns)
 print(df.head())
 print(f"Total rows: {len(df)}")
 
-# Identify feature columns and target
+# Define features and target column
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
@@ -73,10 +68,7 @@ def scale_environments_global(train_environments, test_environments):
     
     return scaled_train_envs, scaled_test_envs
 
-################
-### IRM CLASS ###
-################
-
+# Define IRM class (adapted from https://github.com/facebookresearch/DomainBed)
 class IRM:
     def __init__(self, environments, args):
         best_reg = 0
@@ -145,21 +137,19 @@ class IRM:
     def solution(self):
         return (self.phi @ self.w).view(-1, 1)
 
-################
-### LOEO-CV  ###
-################
-
-# Training parameters for IRM
+# Set training parameters
 args_irm = {
     "lr": 0.01,
     "n_iterations": 1000,
-    "verbose": False,  # Set to True for detailed logging
+    "verbose": False, 
     "early_stopping_patience": 100,
     "early_stopping_min_delta": 1e-4
 }
 
-site_ids = np.array(site_order)  # Array of site names
+# Define array of all sitenames
+site_ids = np.array(site_order)
 
+# Define which fold to run (later in main we set fold_index to DE-Hai as desired)
 def run_fold(fold_index):
     # Leave out the environment (site) specified by fold_index
     train_environments = [env for j, env in enumerate(environments) if j != fold_index]
@@ -175,7 +165,7 @@ def run_fold(fold_index):
     x_test, y_test = scaled_test_envs[0]
     y_pred_scaled = x_test @ irm_model.solution()
     
-    # Save the predictions and actual values
+    # Save predictions and actual values
     actual = y_test.detach().numpy().flatten()
     predicted = y_pred_scaled.detach().numpy().flatten()
     predictions_df = pd.DataFrame({'actual': actual, 'predicted': predicted})
@@ -184,14 +174,15 @@ def run_fold(fold_index):
     
     # Create a joint scatter plot with marginal histograms
     g = sns.jointplot(x='actual', y='predicted', data=predictions_df, kind="scatter", s=1)
-    plt.plot([0, 1], [0, 1], color="red")  # Reference line y=x
+    plt.plot([0, 1], [0, 1], color="red")  # Add perfect prediction line y=x
     plt.xlabel("True GPP")
     plt.ylabel("Predicted GPP")
     plt.savefig('de_hai_irm_IRM.png')
     plt.show()
-    
+
+# Execute main function
 if __name__ == '__main__':
-    # Instead of using command-line arguments, find the index for the 'DE-Hai' site
+    # Find the index form the DE-Hai site from all site_ids
     try:
         fold_index = list(site_ids).index("DE-Hai")
     except ValueError:
@@ -199,4 +190,3 @@ if __name__ == '__main__':
         exit(1)
     
     run_fold(fold_index)
-
