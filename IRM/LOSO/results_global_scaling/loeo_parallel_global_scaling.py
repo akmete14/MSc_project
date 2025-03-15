@@ -1,3 +1,4 @@
+# Import libraries
 import pandas as pd
 import torch
 from torch.autograd import grad
@@ -7,16 +8,13 @@ import os
 from tqdm import tqdm
 print("modules and torch imported")
 
-############################
-### MAKE DATAFRAME READY ###
-############################
-
-# Read the CSV file into a DataFrame and drop not necessariy columns 'Unnamed: 0' and 'cluster'
+# Load dataframe and preprocess
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-df = df.drop(columns=['Unnamed: 0', 'cluster'])
+df = df.fillna(0) # Fill NaN with zeros if there are any
+df = df.drop(columns=['Unnamed: 0', 'cluster']) # dorp unnecessary columns
 
+# Convert float64 to float32 to save resources
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
@@ -24,7 +22,7 @@ print(df.columns)
 print(df.head())
 print(len(df))
 
-# Identify feature columns
+# Get feature and target columns
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
@@ -41,7 +39,7 @@ for site, group in df.groupby('site_id'):
 
 
 # Define scaling #
-# Define Min-Max Scaling (X and Y)
+# Define Min-Max Scaling
 def scale_environments_global(train_environments, test_environments):
     
     # Pool training data for features and target
@@ -77,10 +75,7 @@ def scale_environments_global(train_environments, test_environments):
 
 
 
-#####################
-### USE IRM CLASS ###
-#####################
-
+# Define IRM class (adapted from https://github.com/facebookresearch/DomainBed)
 class IRM:
     def __init__(self, environments, args):
         best_reg = 0
@@ -159,21 +154,20 @@ class IRM:
 
 
 
-################
-### LOEO-CV  ###
-################
 
-    # Define training parameters
+ # Define training parameters
 args = {
         "lr": 0.01,
         "n_iterations": 1000,
-        "verbose": False,  # Turn off verbose logging for cluster jobs
+        "verbose": False,
         "early_stopping_patience": 100,  # stop if no improvement for 100 iterations
         "early_stopping_min_delta": 1e-4
 }
-    
+
+# Get all sitenames
 site_ids = df['site_id'].unique()[:len(environments)]
 
+# Define which fold is being processed
 def run_fold(fold_index):
     
     # Leave out the fold specified by fold_index
@@ -217,6 +211,7 @@ def run_fold(fold_index):
     output_filename = os.path.join("results_global_scaling", f"fold_{fold_index}_results.csv")
     results_df.to_csv(output_filename, index=False)
 
+# Execute main function
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Run a single LOEO fold.")
     parser.add_argument("fold", type=int, help="Index of the fold to leave out (0-289)")
