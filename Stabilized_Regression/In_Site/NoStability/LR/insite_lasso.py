@@ -1,3 +1,5 @@
+# The following implementation is based on in https://arxiv.org/pdf/1911.01850. So when refering to equations we refer to equations in this paper
+# Import libraries
 import argparse
 import itertools
 import pandas as pd
@@ -16,17 +18,19 @@ parser = argparse.ArgumentParser(description="Insite Stabilized Regression using
 parser.add_argument("--site_index", type=int, required=True, help="Index of the site to process")
 args = parser.parse_args()
 
-# Read data and preprocess
+# Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
-    df[col] = df[col].astype('float32')
-df = df.drop(columns=['Unnamed: 0', 'cluster'])
+df = df.fillna(0) # fill remaining NaNs with zero if there are any
+df = df.drop(columns=['Unnamed: 0', 'cluster']) # drop unnecessary columns
 print("Columns:", df.columns)
 print("Loaded dataframe.")
 
-# Define features and target (all features except GPP and site_id)
+# Convert float64 to float32 to save resources
+for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
+    df[col] = df[col].astype('float32')
+
+# Define feature and target columns
 feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
@@ -38,13 +42,12 @@ site = sites[args.site_index]
 print("Processing site:", site)
 df_site = df[df['site_id'] == site].copy()
 
-# Perform an 80/20 chronological split on this site's data for screening and evaluation.
+# For screening, split the site's data into a chronological 80/20 train-test split
 split_index = int(0.8 * len(df_site))
 df_train_site = df_site.iloc[:split_index]
 df_test_site  = df_site.iloc[split_index:]
 
-# ===== LASSO FEATURE SCREENING =====
-# Use the training portion (80%) for screening
+# Screen the features using LASSO on the training data
 X_train_screen = df_train_site[feature_columns]
 y_train_screen = df_train_site[target_column]
 
@@ -60,9 +63,9 @@ print("Selected features after LASSO screening:", selected_features)
 if len(selected_features) == 0:
     raise ValueError("LASSO screening removed all features. Please check your data or adjust LASSO parameters.")
 
-# ===== END FEATURE SCREENING =====
 
-# Create all feature subsets using only the LASSO-selected features
+
+# Given screened features, define the set of all posisble subset of features
 all_subsets = []
 selected_features = list(selected_features)
 for r in range(1, len(selected_features) + 1):
@@ -70,9 +73,9 @@ for r in range(1, len(selected_features) + 1):
         all_subsets.append(list(subset))
 print("Number of subsets (from LASSO-selected features):", len(all_subsets))
 
-# Define a compute function for a single site using an 80/20 chronological split.
+# Define how to compute prediction and stability score
 def compute_scores_insite(df_site, feature_subset, target_column):
-    # Use an 80/20 split for training and testing (chronologically)
+    # Make 80/20 train-test split and define train and test for feature and target
     split_index = int(0.8 * len(df_site))
     df_train = df_site.iloc[:split_index]
     df_test  = df_site.iloc[split_index:]
@@ -82,10 +85,12 @@ def compute_scores_insite(df_site, feature_subset, target_column):
     X_test  = df_test[feature_subset]
     y_test  = df_test[target_column]
     
+    # Scale features
     scaler = MinMaxScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled  = scaler.transform(X_test)
     
+    # Scale target
     y_train_min = y_train.min()
     y_train_max = y_train.max()
 
@@ -97,37 +102,38 @@ def compute_scores_insite(df_site, feature_subset, target_column):
         y_test_scaled = (y_test - y_train_min) / (y_train_max - y_train_min)
 
     
-    # Use LinearRegression as the base regressor
+    # Define and fit model
     model = LinearRegression()
     model.fit(X_train_scaled, y_train_scaled)
     
-    # Compute prediction score as negative MSE on training data
+    # Compute prediction score
     y_pred = model.predict(X_test_scaled)
     mse = mean_squared_error(y_test_scaled, y_pred)
     pred_score = -mse
     
-    # Stability score: variance of squared errors on training data
+    # compute stability score
     squared_errors = (y_test_scaled - y_pred) ** 2
     stab_score = np.var(squared_errors, ddof=1) if len(squared_errors) > 1 else 0
     
     return pred_score, stab_score, model, scaler, y_train_min, y_train_max
 
-# Compute scores for each subset on the current site (using all of df_site)
+# Initialize to save scores
 pred_scores_all = []
 stab_scores_all = []
 
+# Loop through each subset and calculate scores
 for subset in tqdm(all_subsets, desc=f"Evaluating subsets for site {site}"):
     pred_score, stab_score, _, _, _, _ = compute_scores_insite(df_site, subset, target_column)
     pred_scores_all.append(pred_score)
     stab_scores_all.append(stab_score)
 
-# Set threshold based on prediction score (e.g., top 5%)
-alpha_pred = 0.05  # Keep the top 5% subsets based on prediction score
+# Threshold for prediction score is set to .05. Consider only these subsets, having greater prediction score than the 95% quantile
+alpha_pred = 0.05
 c_pred = np.quantile(pred_scores_all, 1 - alpha_pred)
 O_hat = [subset for subset, score in zip(all_subsets, pred_scores_all) if score >= c_pred]
 print("For site", site, "O_hat count:", len(O_hat))
 
-# Train ensemble models for each subset in O_hat using the training portion (80%) of the site.
+# Train the ensemble model as defined in Equaiton (1.1)
 trained_models = {}
 for subset in O_hat:
     X_train = df_train_site[subset]
@@ -146,9 +152,10 @@ for subset in O_hat:
     model.fit(X_train_scaled, y_train_scaled)
     trained_models[str(subset)] = (model, scaler, y_train_min, y_train_max)
 
-# Equal weighting for ensemble members
+# Each regressor in the ensemble model gets the same weight
 weight = 1.0 / len(O_hat) if len(O_hat) > 0 else 0
 
+# Define function which predicts values using ensemble model
 def ensemble_predict(X, return_scaled=False):
     ensemble_preds = np.zeros(len(X))
     for subset in O_hat:
@@ -163,7 +170,7 @@ def ensemble_predict(X, return_scaled=False):
         ensemble_preds += weight * pred
     return ensemble_preds
 
-# Train a full model using all LASSO-selected features on the training portion for comparison.
+# For comparison, also train the full (all variables after screening) model
 X_train_full = df_train_site[selected_features]
 y_train_full = df_train_site[target_column]
 scaler_full = MinMaxScaler()
@@ -178,7 +185,7 @@ else:
 full_model = LinearRegression()
 full_model.fit(X_train_full_scaled, y_train_full_scaled)
 
-# Evaluate on the testing portion (20%) of the site.
+# Predict on the 20% test data and get metrics
 X_test_full = df_test_site[selected_features]
 X_test_full_scaled = scaler_full.transform(X_test_full)
 full_preds_scaled = full_model.predict(X_test_full_scaled)
@@ -203,7 +210,7 @@ ensemble_mae = np.mean(np.abs(y_test_scaled_full - ensemble_preds_scaled))
 print("Site {} Ensemble MSE (scaled): {}".format(site, ensemble_mse_scaled))
 print("Site {} Full model MSE (scaled): {}".format(site, full_mse_scaled))
 
-# Save results
+# Save results from ensemble model and full model
 results = {
     "site": site,
     "ensemble_mse_scaled": ensemble_mse_scaled,
@@ -219,11 +226,12 @@ results = {
     "O_hat_count": len(O_hat)
 }
 
+# Save results to a csv
 results_df = pd.DataFrame([results])
 results_df.to_csv(f'results_site_{site}.csv', index=False)
 print("Results saved to results_site_{}.csv".format(site))
 
-# For every 10th site, generate and save plots of the score distributions.
+# For comparing prediction scores, plot for every 10th site the distribution of the prediction scores
 if args.site_index % 10 == 0:
     plt.figure()
     plt.hist(stab_scores_all, bins=50)
