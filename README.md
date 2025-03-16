@@ -1,3 +1,6 @@
+1. fold structure
+2. what each file does
+3. how reproduce
 # FLUXNET benchmark
 This git contains implementations of the following methods
 1. Linear Regression (LR),
