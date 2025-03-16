@@ -1,3 +1,4 @@
+# Import libraries
 import sys
 import os
 import itertools
@@ -8,7 +9,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 
-# Function to compute the prediction score for a given subset using XGBoost
+# For a given subset, define the function that computes the corresponding prediction score
 def compute_pred_score(df_train, feature_subset, target_column):
     # Train on the entire training set using features in S.
     X_train = df_train[feature_subset]
@@ -49,6 +50,7 @@ def compute_pred_score(df_train, feature_subset, target_column):
     
     return pred_score, model, scaler, y_train_min, y_train_max
 
+# Main function
 if __name__ == '__main__':
     # Define test_site_index either via command-line argument or manually.
     if len(sys.argv) < 2:
@@ -56,17 +58,18 @@ if __name__ == '__main__':
         sys.exit(1)
     test_site_index = int(sys.argv[1])
     
-    # Load and preprocess the data.
+    # Load and process data.
     df = pd.read_csv('/cluster/project/math/akmete/MSc/50sites_balanced.csv')
-    df = df.dropna(axis=1, how='all')
-    df = df.fillna(0)
+    df = df.dropna(axis=1, how='all') # remove columns which have only NaNs
+    df = df.fillna(0) # fill NaNs with 0 if there are any
+    df = df.drop(columns=['Unnamed: 0', 'cluster']) # Remove unnecessary columsn
+    print("Loaded dataframe with columns:", df.columns)
+
+    # Convert float64 to float32
     for col in df.select_dtypes(include=['float64']).columns:
         df[col] = df[col].astype('float32')
-    # Drop columns not needed (for LOSO, we don't need 'cluster').
-    df = df.drop(columns=['Unnamed: 0', 'cluster'])
-    print("Loaded dataframe with columns:", df.columns)
     
-    # Define initial feature columns and target.
+    # Define initial feature and target columns (initial because we will screen later in the code)
     initial_feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
     target_column = "GPP"
     
@@ -79,11 +82,11 @@ if __name__ == '__main__':
     test_site = sites[test_site_index]
     print(f"Processing fold (test site): {test_site}")
     
-    # Split data: training = all sites except test_site, testing = test_site.
+    # Split data into train and test
     df_train = df[df['site_id'] != test_site].copy()
     df_test  = df[df['site_id'] == test_site].copy()
     
-    # === XGBOOST FEATURE SCREENING ===
+    # Screen down the features using built-in feature importance of xgboost
     X_train_screen = df_train[initial_feature_columns]
     y_train_screen = df_train[target_column]
     
@@ -101,14 +104,14 @@ if __name__ == '__main__':
         raise ValueError(f"XGBoost screening removed all features for test site {test_site}.")
     print(f"Selected top 7 features for test site {test_site}: {selected_features}")
     
-    # === Generate all nonempty feature subsets from the selected features ===
+    # Given screened features, generate all possible sets of subsets
     all_subsets = []
     for r in range(1, len(selected_features) + 1):
         for subset in itertools.combinations(selected_features, r):
             all_subsets.append(list(subset))
     print("Number of subsets:", len(all_subsets))
     
-    # === Evaluate every subset S on the training data ===
+    # For each subset S, get prediction score
     pred_scores_all = []
     scores_info = {}
     for subset in all_subsets:
@@ -122,14 +125,13 @@ if __name__ == '__main__':
             "y_max": y_max
         }
     
-    # === Filter subsets ===
-    # Retain only those subsets whose prediction score is at or above the 95th quantile.
+    # Check whether prediction score satisfies prediction threshold. If so, then keep the set
     alpha_pred = 0.1
     pred_threshold = np.quantile(pred_scores_all, 1 - alpha_pred)
     O_hat = [subset for subset in all_subsets if scores_info[str(subset)]["pred_score"] >= pred_threshold]
     print(f"O_hat count for test site {test_site}: {len(O_hat)}")
     
-    # === Train ensemble models for each subset in O_hat using the entire training data. ===
+    # Given filtered subsets, train the SR model
     trained_models = {}
     for subset in O_hat:
         X_train_subset = df_train[subset]
@@ -146,7 +148,7 @@ if __name__ == '__main__':
         model.fit(X_train_subset_scaled, y_train_scaled)
         trained_models[str(subset)] = (model, scaler_model, y_train_min, y_train_max)
     
-    # === Ensemble prediction: simple average over the models in O_hat. ===
+    # Get ensemble prediction as defined in Equation (1.1) where each regressor gets the same weight in the ensemble model
     weight = 1.0 / len(O_hat) if len(O_hat) > 0 else 0
     def ensemble_predict(X, return_scaled=False):
         ensemble_preds = np.zeros(len(X))
@@ -162,7 +164,7 @@ if __name__ == '__main__':
             ensemble_preds += weight * pred
         return ensemble_preds
     
-    # === Train a full model (using all selected features) for comparison. ===
+    # For comparison, train a model using all screened features
     X_train_full = df_train[selected_features]
     y_train_full = df_train[target_column]
     scaler_full = MinMaxScaler()
@@ -176,7 +178,7 @@ if __name__ == '__main__':
     full_model = xgb.XGBRegressor(random_state=0, n_jobs=-1)
     full_model.fit(X_train_full_scaled, y_train_full_scaled)
     
-    # === Evaluate on the held-out test site. ===
+    # Evaluate model on test site and get metrics for both models
     X_test_full = df_test[selected_features]
     X_test_full_scaled = scaler_full.transform(X_test_full)
     full_preds_scaled = full_model.predict(X_test_full_scaled)
@@ -201,7 +203,7 @@ if __name__ == '__main__':
     print(f"Test Site {test_site} Ensemble MSE (scaled): {ensemble_mse_scaled}")
     print(f"Test Site {test_site} Full model MSE (scaled): {full_mse_scaled}")
     
-    # Save results for this fold.
+    # Save the results for this fold
     fold_result = {
         "test_site": test_site,
         "ensemble_mse_scaled": ensemble_mse_scaled,
@@ -220,7 +222,7 @@ if __name__ == '__main__':
     result_df = pd.DataFrame([fold_result])
     result_df.to_csv(f'results_site_{test_site}.csv', index=False)
     
-    # Save a plot of prediction score distribution for this fold.
+    # Save a plot of the prediction scores to compare to other sites
     plt.figure()
     plt.hist([scores_info[str(s)]["pred_score"] for s in all_subsets], bins=50)
     plt.title(f"Prediction Scores (Test Site {test_site})")
@@ -228,4 +230,3 @@ if __name__ == '__main__':
     plt.ylabel("Frequency")
     plt.savefig(f'pred_scores_site_{test_site}.png')
     plt.close()
-
