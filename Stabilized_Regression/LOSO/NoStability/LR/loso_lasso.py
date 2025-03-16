@@ -1,3 +1,4 @@
+# Import libraries
 import os
 import itertools
 import pandas as pd
@@ -7,16 +8,9 @@ from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 
-# Function to compute the prediction score for a given subset
+# Define function that computes prediction score for a given subset S
 def compute_pred_score(df_train, feature_subset, target_column):
-    """
-    For a given feature subset S, train a regressor on all training data (i.e. all sites except the test site).
-    Then, for each training site, compute the MSE (after scaling X and Y based on global training parameters).
-    
-    Returns:
-      - pred_score: negative average MSE across training sites (so that higher is better).
-      - model, scaler, y_train_min, y_train_max: needed later for predictions.
-    """
+
     # Train on the entire training set using features in S.
     X_train = df_train[feature_subset]
     y_train = df_train[target_column]
@@ -53,22 +47,24 @@ def compute_pred_score(df_train, feature_subset, target_column):
         mse_list.append(mse)
     
     avg_mse = np.mean(mse_list)
-    pred_score = -avg_mse  # Lower MSE gives a higher (less negative) score.
+    pred_score = -avg_mse  # Calculate prediction score
     
     return pred_score, model, scaler, y_train_min, y_train_max
 
+# Main function
 if __name__ == '__main__':
     # Load and preprocess the data.
     df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
-    df = df.dropna(axis=1, how='all')
-    df = df.fillna(0)
+    df = df.dropna(axis=1, how='all') # remove columns when containing only NaNs
+    df = df.fillna(0) # fill NaNs with 0 if there are any
+    df = df.drop(columns=['Unnamed: 0', 'cluster']) # drop unnecessary columns
+    print("Loaded dataframe with columns:", df.columns)
+
+    # Convert float64 to float32 to save memory
     for col in df.select_dtypes(include=['float64']).columns:
         df[col] = df[col].astype('float32')
-    # Drop columns not needed (for LOSO, we don't need 'cluster').
-    df = df.drop(columns=['Unnamed: 0', 'cluster'])
-    print("Loaded dataframe with columns:", df.columns)
     
-    # Define initial feature columns and target.
+    # Define initial feature and target columns (initial because we remove some after screening)
     initial_feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id']]
     target_column = "GPP"
     
@@ -83,11 +79,11 @@ if __name__ == '__main__':
         raise ValueError("SLURM_ARRAY_TASK_ID is out of range. Check the number of unique sites.")
     print(f"Processing fold for test site: {test_site}")
     
-    # Split data: training = all sites except test_site, testing = test_site.
+    # Split data into train and test for this fold
     df_train = df[df['site_id'] != test_site].copy()
     df_test  = df[df['site_id'] == test_site].copy()
     
-    # === LASSO FEATURE SCREENING ===
+    # SCREENING using LASSSO
     X_train = df_train[initial_feature_columns]
     y_train = df_train[target_column]
     
@@ -103,14 +99,14 @@ if __name__ == '__main__':
         raise ValueError(f"LASSO screening removed all features for test site {test_site}.")
     print(f"Selected features for test site {test_site}: {selected_features}")
     
-    # === Generate all nonempty feature subsets from the selected features ===
+    # Given screened feature set, generate all possible sets of features
     all_subsets = []
     for r in range(1, len(selected_features) + 1):
         for subset in itertools.combinations(selected_features, r):
             all_subsets.append(list(subset))
     print("Number of subsets:", len(all_subsets))
     
-    # === Evaluate every subset S on the training data ===
+    # For each set, get prediction score
     pred_scores_all = []
     scores_info = {}
     for subset in all_subsets:
@@ -124,14 +120,13 @@ if __name__ == '__main__':
             "y_max": y_max
         }
     
-    # === Filter subsets ===
-    # Retain only those subsets whose prediction score is at or above the 95th quantile.
+    # Filter with respect to prediction threshold
     alpha_pred = 0.05
     pred_threshold = np.quantile(pred_scores_all, 1-alpha_pred)
     O_hat = [subset for subset in all_subsets if scores_info[str(subset)]["pred_score"] >= pred_threshold]
     print(f"O_hat count for test site {test_site}: {len(O_hat)}")
     
-    # === Train ensemble models for each subset in O_hat using the entire training data. ===
+    # Given O_hat, train ensemble model
     trained_models = {}
     for subset in O_hat:
         X_train_subset = df_train[subset]
@@ -148,8 +143,10 @@ if __name__ == '__main__':
         model.fit(X_train_scaled, y_train_scaled)
         trained_models[str(subset)] = (model, scaler_model, y_train_min, y_train_max)
     
-    # === Ensemble prediction: simple average over the models in O_hat. ===
+    # Get weight for each regressor in ensemble model
     weight = 1.0 / len(O_hat) if len(O_hat) > 0 else 0
+
+    # Define prediction function for the ensemble model
     def ensemble_predict(X, return_scaled=False):
         ensemble_preds = np.zeros(len(X))
         for subset in O_hat:
@@ -164,7 +161,7 @@ if __name__ == '__main__':
             ensemble_preds += weight * pred
         return ensemble_preds
     
-    # === Train a full model (using all selected features) for comparison. ===
+    # Train a model using all screened features so that we can compare to ensemble model
     X_train_full = df_train[selected_features]
     y_train_full = df_train[target_column]
     scaler_full = MinMaxScaler()
@@ -178,7 +175,7 @@ if __name__ == '__main__':
     full_model = LinearRegression()
     full_model.fit(X_train_full_scaled, y_train_full_scaled)
     
-    # === Evaluate on the held-out test site. ===
+    # Evalaute on test site
     X_test_full = df_test[selected_features]
     X_test_full_scaled = scaler_full.transform(X_test_full)
     full_preds_scaled = full_model.predict(X_test_full_scaled)
@@ -203,7 +200,7 @@ if __name__ == '__main__':
     print(f"Test Site {test_site} Ensemble MSE (scaled): {ensemble_mse_scaled}")
     print(f"Test Site {test_site} Full model MSE (scaled): {full_mse_scaled}")
     
-    # Save results for this fold.
+    # Save results for ensemble and full model (and then to CSV)
     fold_result = {
         "test_site": test_site,
         "ensemble_mse_scaled": ensemble_mse_scaled,
@@ -221,7 +218,7 @@ if __name__ == '__main__':
     result_df = pd.DataFrame([fold_result])
     result_df.to_csv(f'results_site_{test_site}.csv', index=False)
     
-    # Save a plot of prediction score distribution for this fold.
+    # To compare prediction score distributions, you can plot them
     import matplotlib.pyplot as plt
     plt.figure()
     plt.hist([scores_info[str(s)]["pred_score"] for s in all_subsets], bins=50)
@@ -230,4 +227,3 @@ if __name__ == '__main__':
     plt.ylabel("Frequency")
     plt.savefig(f'pred_scores_site_{test_site}.png')
     plt.close()
-
