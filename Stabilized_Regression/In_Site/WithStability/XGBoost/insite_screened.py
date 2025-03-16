@@ -16,23 +16,19 @@ parser = argparse.ArgumentParser(description="Insite Stabilized Regression with 
 parser.add_argument("--site_index", type=int, required=True, help="Index of the site to process")
 args = parser.parse_args()
 
-# Read data and preprocess
+# Load and preprocess data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
-df = df.fillna(0)
-for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
-    df[col] = df[col].astype('float32')
-df = df.drop(columns=['Unnamed: 0', 'cluster'])
+df = df.fillna(0) # fill NaNs with 0 if there are any
+df = df.drop(columns=['Unnamed: 0', 'cluster']) # drop unnecessary columns
 print("Columns:", df.columns)
 print("Loaded dataframe.")
 
-# Define features and target (all available features except target and site_id)
+# Define feature and target columns
 all_features = [col for col in df.columns if col not in ['GPP', 'site_id']]
 target_column = "GPP"
 
-# ------------------------------------------------
-# Feature Screening: Keep top_k=7 features based on model-derived importance
-# ------------------------------------------------
+# SCREENING: Keep only top_k features, where screening is done using built-in feature importance of XGBoost
 X_all = df[all_features]
 y_all = df[target_column]
 scaler_pre = MinMaxScaler()
@@ -53,7 +49,7 @@ top_k = 7
 screened_features = sorted_features[:top_k]
 print("Screened features (top {}): {}".format(top_k, screened_features))
 
-# Create all feature subsets from the screened features
+# Given screened variables, we generate all possible subsets
 all_subsets = []
 for r in range(1, len(screened_features) + 1):
     for subset in itertools.combinations(screened_features, r):
@@ -68,9 +64,7 @@ site = sites[args.site_index]
 print("Processing site:", site)
 df_site = df[df['site_id'] == site].copy()
 
-# ------------------------------------------------
-# Define a compute function for a single site using an 80/20 chronological split
-# ------------------------------------------------
+# define function that computes both scores
 def compute_scores_insite(df_site, feature_subset, target_column):
     split_index = int(0.8 * len(df_site))
     df_train = df_site.iloc[:split_index]
@@ -104,20 +98,18 @@ def compute_scores_insite(df_site, feature_subset, target_column):
                          n_jobs=-1)
     model.fit(X_train_scaled, y_train_scaled)
     
-    # Compute prediction score as negative MSE on training data
+    # compute prediction score
     y_pred = model.predict(X_test_scaled)
     mse = mean_squared_error(y_test_scaled, y_pred)
     pred_score = -mse
     
-    # Stability score: variance of squared errors on training data
+    # compute stability score
     squared_errors = (y_test_scaled - y_pred) ** 2
     stab_score = np.var(squared_errors, ddof=1) if len(squared_errors) > 1 else 0
     
     return pred_score, stab_score, model, scaler, y_train_min, y_train_max
 
-# ------------------------------------------------
-# Evaluate all subsets for the current site
-# ------------------------------------------------
+# Evaluate all subsets
 pred_scores_all = []
 stab_scores_all = []
 
@@ -126,23 +118,20 @@ for subset in tqdm(all_subsets, desc=f"Evaluating subsets for site {site}"):
     pred_scores_all.append(pred_score)
     stab_scores_all.append(stab_score)
 
-# ------------------------------------------------
-# Filter subsets based on both (in)stability and prediction score
-# ------------------------------------------------
-# First, filter based on stability score.
-# In this example, we select subsets with stability scores below the 10th percentile.
+
+# Filter wrt stability
 quantile_level = 0.1  
 alpha_stab = np.quantile(stab_scores_all, quantile_level)
 print("Stability threshold (alpha_stab):", alpha_stab)
 
 G_hat = [subset for subset, score in zip(all_subsets, stab_scores_all) if score <= alpha_stab]
 
-# Next, compute the prediction threshold only over the subsets in G_hat.
+# Compute prediction threshold from all subsets that survived stability filtering
 ghat_pred_scores = [score for subset, score in zip(all_subsets, pred_scores_all) if subset in G_hat]
-alpha_pred = 0.05  # keep the top 5% based on prediction score
+alpha_pred = 0.05 
 c_pred = np.quantile(ghat_pred_scores, 1 - alpha_pred)
 
-# Finally, select subsets that satisfy both thresholds.
+# Filter subsets satisfying prediction threshold
 O_hat = [subset for subset, score in zip(all_subsets, pred_scores_all) 
          if (subset in G_hat) and (score >= c_pred)]
 
@@ -150,16 +139,12 @@ print("For site", site, "G_hat count:", len(G_hat))
 print("For site", site, "O_hat count:", len(O_hat))
 print("O_hat subsets for site", site, ":", O_hat)
 
-# ------------------------------------------------
-# Perform an 80/20 chronological split on this site
-# ------------------------------------------------
+# Perform chronological 80/20 split
 split_index = int(0.8 * len(df_site))
 df_train_site = df_site.iloc[:split_index]
 df_test_site  = df_site.iloc[split_index:]
 
-# ------------------------------------------------
-# Train ensemble models for each subset in O_hat on the training portion
-# ------------------------------------------------
+# Train ensemble model which is obtained by training one regressor each for every subset contained in O_hat
 trained_models = {}
 for subset in O_hat:
     X_train = df_train_site[subset]
@@ -185,6 +170,7 @@ for subset in O_hat:
 
 weight = 1.0 / len(O_hat) if len(O_hat) > 0 else 0
 
+# Define prediction function
 def ensemble_predict(X, return_scaled=False):
     ensemble_preds = np.zeros(len(X))
     for subset in O_hat:
@@ -199,9 +185,8 @@ def ensemble_predict(X, return_scaled=False):
         ensemble_preds += weight * pred
     return ensemble_preds
 
-# ------------------------------------------------
-# Train a full model using all screened features on the training portion for comparison
-# ------------------------------------------------
+
+# Train model on all screened features to compare to ensemble model
 X_train_full = df_train_site[screened_features]
 y_train_full = df_train_site[target_column]
 scaler_full = MinMaxScaler()
@@ -230,7 +215,7 @@ else:
     y_test_scaled_full = (df_test_site[target_column].values - y_train_min_full) / (y_train_max_full - y_train_min_full)
 full_mse_scaled = mean_squared_error(y_test_scaled_full, full_preds_scaled)
 
-# Compute additional metrics
+# Compute metrics
 ensemble_rmse_scaled = np.sqrt(mean_squared_error(y_test_scaled_full, ensemble_predict(df_test_site, return_scaled=True)))
 full_rmse_scaled = np.sqrt(full_mse_scaled)
 ensemble_r2 = r2_score(y_test_scaled_full, ensemble_predict(df_test_site, return_scaled=True))
@@ -243,9 +228,7 @@ full_mae = np.mean(np.abs(y_test_scaled_full - full_preds_scaled))
 print("Site {} Ensemble MSE (scaled): {}".format(site, ensemble_predict(df_test_site, return_scaled=True)))
 print("Site {} Full model MSE (scaled): {}".format(site, full_mse_scaled))
 
-# ------------------------------------------------
-# Save results
-# ------------------------------------------------
+# Save results (and later saving to csv)
 results = {
     "site": site,
     "ensemble_mse_scaled": mean_squared_error(y_test_scaled_full, ensemble_predict(df_test_site, return_scaled=True)),
@@ -267,9 +250,7 @@ results_df = pd.DataFrame([results])
 results_df.to_csv(f'results_site_{site}.csv', index=False)
 print("Results saved to results_site_{}.csv".format(site))
 
-# ------------------------------------------------
-# For every 20th site, generate and save plots of the score distributions.
-# ------------------------------------------------
+# For every 20th site, plot plot histograms for prediction and stability score distribution
 if args.site_index % 20 == 0:
     plt.figure()
     plt.hist(stab_scores_all, bins=50)
@@ -286,4 +267,3 @@ if args.site_index % 20 == 0:
     plt.ylabel("Frequency")
     plt.savefig(f'pred_scores_{site}.png')
     plt.close()
-
