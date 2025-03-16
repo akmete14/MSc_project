@@ -1,3 +1,4 @@
+# Import libraries
 import argparse
 import itertools
 import pandas as pd
@@ -8,48 +9,37 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 from xgboost import XGBRegressor
 
-# -----------------------------
 # Parse command-line argument for test cluster (LOGO setting)
-# -----------------------------
 parser = argparse.ArgumentParser(description="LOGO Stabilized Regression using XGBoost with Dual Filtering")
 parser.add_argument("--test_cluster", type=int, required=True, help="Cluster to leave out for testing")
 args = parser.parse_args()
 
-# -----------------------------
-# Load and preprocess data
-# -----------------------------
+# Load and process data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
-df = df.drop(columns=['Unnamed: 0'])  # Drop unnecessary columns
-df = df.dropna(axis=1, how='all')       # Drop columns where all values are NaN
-df = df.fillna(0)
+df = df.drop(columns=['Unnamed: 0']) # Drop unnecessary columns
+df = df.dropna(axis=1, how='all') # Drop columns where all values are NaN
+df = df.fillna(0) # fill NaNs with 0 if there are any
 
-# Cast float columns to float32 for efficiency
+# Convert float64 to float32 to save resources
 for col in df.select_dtypes(include=['float64']).columns:
     df[col] = df[col].astype('float32')
 
 print("Columns:", df.columns)
 print("Loaded dataframe.")
 
-# -----------------------------
-# Define initial features and target.
-# Exclude 'GPP', 'site_id', and 'cluster'
-# -----------------------------
+# Define feature and target columns
 initial_feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id', 'cluster']]
 target_column = "GPP"
 
-# -----------------------------
-# Split data into training (all clusters except the test cluster) and testing (held-out cluster)
-# -----------------------------
+
+# Split data into train and test
 test_cluster = args.test_cluster
 if test_cluster not in df['cluster'].unique():
     raise ValueError("Invalid test cluster value.")
 df_train = df[df['cluster'] != test_cluster].copy()
 df_test  = df[df['cluster'] == test_cluster].copy()
 
-# -----------------------------
-# FEATURE SCREENING USING XGBOOST
-# Compute feature importances on the training set and select the top 5 features.
-# -----------------------------
+# SCREENING: keep top_k features according to feature impoortance (thus train a temporary model, ideall not a complex xgboost)
 X_train_screen = df_train[initial_feature_columns]
 y_train_screen = df_train[target_column]
 scaler_screen = MinMaxScaler()
@@ -65,35 +55,23 @@ temp_model.fit(X_train_screen_scaled, y_train_screen)
 importance = temp_model.feature_importances_
 feature_importance = dict(zip(initial_feature_columns, importance))
 sorted_features = sorted(feature_importance, key=feature_importance.get, reverse=True)
-top_k = 6
+top_k = 7
 selected_features = sorted_features[:top_k]
-print("Selected features after screening (top 6):", selected_features)
+print("Selected features after screening (top 7):", selected_features)
 
-# Update feature_columns to only include selected features.
+# Use only screened variables
 feature_columns = list(selected_features)
 if not feature_columns:
     raise ValueError("Feature screening removed all features.")
 
-# -----------------------------
-# Generate all nonempty feature subsets from the screened features.
-# -----------------------------
+# Given screened features, get all possible combinations of features
 all_subsets = []
 for r in range(1, len(feature_columns) + 1):
     for subset in itertools.combinations(feature_columns, r):
         all_subsets.append(list(subset))
 print("Number of subsets:", len(all_subsets))
 
-# -----------------------------
-# Define function to compute prediction and instability scores for a subset using XGBoost.
-#
-# For a given subset S, train an XGBRegressor on the entire training data (all non-held-out clusters).
-# Then, for each training site (from 'site_id'), compute the MSE after scaling (using global training scaling).
-#
-# Returns:
-#   - pred_score: negative average MSE over training sites.
-#   - instability_score: the 95th quantile of per-site MSE values.
-#   - Plus the fitted model, scaler, and y_train scaling parameters.
-# -----------------------------
+# Define how to compute prediction and stability score
 def compute_scores(df_train, feature_subset, target_column):
     X_train = df_train[feature_subset]
     y_train = df_train[target_column]
@@ -133,9 +111,7 @@ def compute_scores(df_train, feature_subset, target_column):
     instability_score = np.quantile(mse_list, 0.95)
     return pred_score, instability_score, model, scaler, y_train_min, y_train_max
 
-# -----------------------------
-# Evaluate every subset on the training data.
-# -----------------------------
+# For each subset, evaluate the regressor trained on it (ie get both scores)
 pred_scores_all = []
 instability_scores_all = []
 scores_info = {}  # Dictionary to hold scores and model info for each subset.
@@ -150,29 +126,22 @@ for subset in tqdm(all_subsets, desc=f"Evaluating subsets for cluster {test_clus
                                 "y_min": y_min,
                                 "y_max": y_max}
 
-# -----------------------------
-# Filter subsets using dual criteria:
-#   1. First, select subsets (G_hat) with instability score <= the 5th quantile.
-#   2. Then, among G_hat, select subsets (O_hat) whose prediction score is in the top 5%.
-# -----------------------------
-instab_threshold = np.quantile(instability_scores_all, 0.05)
+
+# Filtering: First only drop all sets wrt stability threshold
+instab_threshold = np.quantile(instability_scores_all, 0.1)
 G_hat = [subset for subset, instab in zip(all_subsets, instability_scores_all) if instab <= instab_threshold]
 print("For test cluster", test_cluster, "G_hat count:", len(G_hat))
 
-# Compute the prediction scores only for subsets in G_hat.
+# Given stable subsets, consider from those all subsets that satisfy the prediction score threshold
 ghat_pred_scores = [score for subset, score in zip(all_subsets, pred_scores_all) if subset in G_hat]
 alpha_pred = 0.1  # keep the top 10% based on prediction score
 c_pred = np.quantile(ghat_pred_scores, 1 - alpha_pred)
-
-# Now, select O_hat as the subsets in G_hat whose prediction score is >= c_pred.
 O_hat = [subset for subset, score in zip(all_subsets, pred_scores_all) if (subset in G_hat) and (score >= c_pred)]
 print("For test cluster", test_cluster, "O_hat count:", len(O_hat))
 print("O_hat subsets for test cluster", test_cluster, ":", O_hat)
 
 
-# -----------------------------
-# Train ensemble models for each subset in O_hat using the entire training data.
-# -----------------------------
+# For each set in O_hat, train the regressor
 trained_models = {}
 for subset in O_hat:
     X_train_subset = df_train[subset]
@@ -190,9 +159,10 @@ for subset in O_hat:
     model.fit(X_train_scaled, y_train_scaled)
     trained_models[str(subset)] = (model, scaler_subset, y_train_min, y_train_max)
 
-# Use equal weight for each model in the ensemble.
+# Each regressor gets the same weight in the ensemble model
 weight = 1.0 / len(O_hat) if len(O_hat) > 0 else 0
 
+# Define how ensemble prediction works (see Equation (1.1))
 def ensemble_predict(X, return_scaled=False):
     ensemble_preds = np.zeros(len(X))
     for subset in O_hat:
@@ -207,9 +177,8 @@ def ensemble_predict(X, return_scaled=False):
         ensemble_preds += weight * pred
     return ensemble_preds
 
-# -----------------------------
-# Train a full model using all screened features (i.e. the top 5 features) on the entire training set.
-# -----------------------------
+
+# Train full model (full model corresponds to training the model on all features after screening)
 X_train_full = df_train[feature_columns]
 y_train_full = df_train[target_column]
 scaler_full = MinMaxScaler()
@@ -225,9 +194,8 @@ full_model = XGBRegressor(n_estimators=100, learning_rate=0.1, reg_alpha=1, reg_
                           random_state=42, objective='reg:squarederror')
 full_model.fit(X_train_full_scaled, y_train_full_scaled)
 
-# -----------------------------
-# Evaluate both the ensemble model and the full model on the held-out (test) cluster.
-# -----------------------------
+
+# Evalaute ensemble and full model for comparison
 X_test_full = df_test[feature_columns]
 X_test_full_scaled = scaler_full.transform(X_test_full)
 full_preds_scaled = full_model.predict(X_test_full_scaled)
@@ -252,9 +220,8 @@ ensemble_mae = np.mean(np.abs(y_test_scaled_full - ensemble_preds_scaled))
 print("Test Cluster {} Ensemble MSE (scaled): {}".format(test_cluster, ensemble_mse_scaled))
 print("Test Cluster {} Full model MSE (scaled): {}".format(test_cluster, full_mse_scaled))
 
-# -----------------------------
+
 # Save results
-# -----------------------------
 results = {
     "test_cluster": test_cluster,
     "ensemble_mse_scaled": ensemble_mse_scaled,
@@ -276,9 +243,7 @@ results_df = pd.DataFrame([results])
 results_df.to_csv(f'results_cluster_{test_cluster}.csv', index=False)
 print("Results saved to results_cluster_{}.csv".format(test_cluster))
 
-# -----------------------------
-# Save diagnostic plots.
-# -----------------------------
+# Save plots for prediction score and stability score for comparison
 plt.figure()
 plt.hist(pred_scores_all, bins=50)
 plt.title("Prediction Scores (Training Sites, Cluster {} left out)".format(test_cluster))
