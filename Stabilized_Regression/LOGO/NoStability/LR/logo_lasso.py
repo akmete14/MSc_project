@@ -1,3 +1,4 @@
+# Import libraries
 import argparse
 import itertools
 import pandas as pd
@@ -13,33 +14,31 @@ parser = argparse.ArgumentParser(description="LOGO Stabilized Regression using L
 parser.add_argument("--test_cluster", type=int, required=True, help="Cluster to leave out for testing")
 args = parser.parse_args()
 
-# Read and preprocess data
+# Load and process data
 df = pd.read_csv('/cluster/project/math/akmete/MSc/preprocessing/df_balanced_groups_onevegindex.csv')
 df = df.drop(columns=['Unnamed: 0'])  # Drop unnecessary columns
 df = df.dropna(axis=1, how='all')  # Drop columns where all values are NaN
 df = df.fillna(0)
 
-# Cast float columns to float32 for efficiency
+# Covnert float64 to float32 ro save resources
 for col in tqdm(df.select_dtypes(include=['float64']).columns, desc="Casting columns"):
     df[col] = df[col].astype('float32')
 
 print("Columns:", df.columns)
 print("Loaded dataframe.")
 
-# Define the initial set of features and the target.
-# Exclude 'GPP', 'site_id', and 'cluster' from features.
+# Define feature and target columns
 initial_feature_columns = [col for col in df.columns if col not in ['GPP', 'site_id', 'cluster']]
 target_column = "GPP"
 
-# Split data into training (all clusters except the test cluster) and testing (held-out cluster)
+# Split data into training and test
 test_cluster = args.test_cluster
 if test_cluster not in df['cluster'].unique():
     raise ValueError("Invalid test cluster value.")
 df_train = df[df['cluster'] != test_cluster].copy()
 df_test  = df[df['cluster'] == test_cluster].copy()
 
-# ===== LASSO FEATURE SCREENING =====
-# Prepare the training data for feature screening
+# SCREENING
 X_train = df_train[initial_feature_columns]
 y_train = df_train[target_column]
 
@@ -60,16 +59,16 @@ feature_columns = list(selected_features)
 if not feature_columns:
     raise ValueError("LASSO screening removed all features. Please check your data or adjust LASSO parameters.")
 
-# ===== END FEATURE SCREENING =====
 
-# Create all feature subsets using the screened features
+
+# Create set of all possible subsets from the screened variables
 all_subsets = []
 for r in range(1, len(feature_columns) + 1):
     for subset in itertools.combinations(feature_columns, r):
         all_subsets.append(list(subset))
 print("Number of subsets:", len(all_subsets))
 
-# For a given subset S, train a regressor on all training data and compute the LOGO prediction score.
+# For a given subset S, train a regressor on all training data and compute the prediction score.
 def compute_logo_pred_score(df_train, feature_subset, target_column):
     # Train on all training data using features in subset S
     X_train_subset = df_train[feature_subset]
@@ -113,19 +112,19 @@ def compute_logo_pred_score(df_train, feature_subset, target_column):
     avg_mse = np.mean(mse_list)
     return -avg_mse  # Negative average MSE as prediction score
 
-# Evaluate all subsets on the training data (aggregated over training sites)
+# For each set of features, calculate the corresponding pred score
 pred_scores_all = []
 for subset in tqdm(all_subsets, desc="Evaluating subsets (LOGO) on training sites"):
     score = compute_logo_pred_score(df_train, subset, target_column)
     pred_scores_all.append(score)
 
-# Set threshold (alpha_pred) to select the top subsets.
-alpha_pred = 0.05  # e.g., top 5%
+# Filter only subsets with prediction score above threshold
+alpha_pred = 0.05
 c_pred = np.quantile(pred_scores_all, 1 - alpha_pred)
 O_hat = [subset for subset, score in zip(all_subsets, pred_scores_all) if score >= c_pred]
 print("For test cluster", test_cluster, "O_hat count:", len(O_hat))
 
-# Train ensemble models for each selected subset in O_hat using the entire training data.
+# Given O_hat, train the ensmeble model
 trained_models = {}
 for subset in O_hat:
     X_train_subset = df_train[subset]
@@ -145,7 +144,7 @@ for subset in O_hat:
     model.fit(X_train_scaled, y_train_scaled)
     trained_models[str(subset)] = (model, scaler, y_train_min, y_train_max)
 
-# Use equal weight for each model in the ensemble.
+# Every regressor gets same weight
 weight = 1.0 / len(O_hat) if len(O_hat) > 0 else 0
 
 def ensemble_predict(X, return_scaled=False):
@@ -163,7 +162,7 @@ def ensemble_predict(X, return_scaled=False):
         ensemble_preds += weight * pred
     return ensemble_preds
 
-# Train a full model using all screened features on the entire training set for comparison.
+# Train full model (corresponding to the model using all screened features)
 X_train_full = df_train[feature_columns]
 y_train_full = df_train[target_column]
 scaler_full = MinMaxScaler()
@@ -178,7 +177,7 @@ else:
 full_model = LinearRegression()
 full_model.fit(X_train_full_scaled, y_train_full_scaled)
 
-# Evaluate both the full model and the ensemble model on the held-out (test) cluster.
+# Evaluate full model and ensemble model
 X_test_full = df_test[feature_columns]
 X_test_full_scaled = scaler_full.transform(X_test_full)
 full_preds_scaled = full_model.predict(X_test_full_scaled)
@@ -219,12 +218,12 @@ results = {
     "O_hat_count": len(O_hat),
     "O_hat": O_hat
 }
-
+# Save to csv
 results_df = pd.DataFrame([results])
 results_df.to_csv(f'results_cluster_{test_cluster}.csv', index=False)
 print("Results saved to results_cluster_{}.csv".format(test_cluster))
 
-# Optionally, for diagnostics, plot the distribution of the prediction scores over all subsets.
+# Plot the distribution of the stability scores if needed
 plt.figure()
 plt.hist(pred_scores_all, bins=50)
 plt.title("Prediction Scores (Training Sites, Cluster {} left out)".format(test_cluster))
