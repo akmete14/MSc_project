@@ -14,7 +14,5 @@ module spider gcc/8.5.0
 
 source /cluster/project/math/akmete/Setup/.venv/bin/activate
 
-# Change to the directory where your Python script is located
-#cd /cluster/project/math/akmete/MSc/preprocessing
 
 python /cluster/project/math/akmete/MSc/Compare_LOGO/Additional_plots/distribution_per_cluster.py
