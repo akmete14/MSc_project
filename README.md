@@ -8,7 +8,7 @@ This git contains implementations of the following methods
 
 To reproduce the experiments, ensure that you have access to the FLUXNET dataset.
 ## FLUXNET datast
-The FLUXNET dataset contains 870 files. For every site there is a flux, a meteo and a remote sensing file (thus in total data from 290 sites). The data needs to be copied into the main directory in a "Data" folder.
+The FLUXNET dataset contains 870 files. For every site there is a flux, a meteo and a remote sensing file (thus in total data from 290 sites). The data needs to be copied into the main directory in a "Data" folder and added to gitignore afterwards.
 <!--
 In the main directory, create a folder called "Data" and copy the data into this folder. Due to the large amount of data, this can take some time. Make sure that the "Data" folder is listed in **.gitignore** to ensure that you don't upload large amounts of data when pushing changes to the repository.
 -->
